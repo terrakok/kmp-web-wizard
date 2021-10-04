@@ -15,9 +15,6 @@ kotlin {
     jvm() //for common tests
     js(IR) {
         browser {
-            distribution {
-                directory = File("$projectDir/docs")
-            }
             testTask {
                 enabled = false
             }
