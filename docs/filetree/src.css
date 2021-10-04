@@ -1,0 +1,29 @@
+/* glue: 0.11.1 hash: ff145c7220 */
+        .sprite-src-folder-c,
+.sprite-src-folder-o {
+            background-image: url('icon.png');
+            background-repeat: no-repeat;
+        }
+        
+        .sprite-src-folder-c {
+            background-position: 0 0;
+            width: 33px;
+            height: 33px;
+        }
+        
+        .sprite-src-folder-o {
+            background-position: 0 -33px;
+            width: 30px;
+            height: 30px;
+        }
+        
+        @media screen and (-webkit-min-device-pixel-ratio: 1.0), screen and (min--moz-device-pixel-ratio: 1.0), screen and (-o-min-device-pixel-ratio: 100/100), screen and (min-device-pixel-ratio: 1.0), screen and (min-resolution: 1.0dppx) {
+            .sprite-src-folder-c,
+    .sprite-src-folder-o {
+                background-image: url('icon.png');
+                -webkit-background-size: 33px 63px;
+                -moz-background-size: 33px 63px;
+                background-size: 33px 63px;
+            }
+        }
+        
