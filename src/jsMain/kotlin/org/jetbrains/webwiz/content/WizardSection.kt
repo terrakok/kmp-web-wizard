@@ -8,10 +8,8 @@ import org.jetbrains.compose.common.foundation.layout.Row
 import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.webwiz.generator.ProjectFile
-import org.jetbrains.webwiz.generator.files.ModuleBuildGradle
 import org.jetbrains.webwiz.generator.files.RootBuildGradle
 import org.jetbrains.webwiz.generator.generate
 import org.jetbrains.webwiz.models.KmpLibrary
@@ -27,6 +25,7 @@ import kotlin.random.Random
 
 private val defaultProject = ProjectInfo(
     projectName = "KMP Project",
+    moduleName = "shared",
     packageName = "org.sample.application",
     kotlinVersion = KotlinVersion.Stable,
     targets = setOf(Target.ANDROID, Target.IOS),
@@ -53,13 +52,29 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
             Row {
                 Div({ classes(WtOffsets.rowItems) }) {
                     Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Name")
+                        Text("Project name")
                     }
 
                     TextInput(projectInfoState.value.projectName) {
 
                         onInput { event ->
                             projectInfoState.value = projectInfoState.value.copy(projectName = event.value)
+                        }
+
+                        classes(WtOffsets.textInputStyle)
+                    }
+                }
+            }
+            Row {
+                Div({ classes(WtOffsets.rowItems) }) {
+                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                        Text("Module name")
+                    }
+
+                    TextInput(projectInfoState.value.moduleName) {
+
+                        onInput { event ->
+                            projectInfoState.value = projectInfoState.value.copy(moduleName = event.value)
                         }
 
                         classes(WtOffsets.textInputStyle)

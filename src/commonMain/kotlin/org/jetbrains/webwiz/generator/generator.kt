@@ -1,15 +1,17 @@
 package org.jetbrains.webwiz.generator
 
 import org.jetbrains.webwiz.generator.files.*
-import org.jetbrains.webwiz.models.*
-import org.jetbrains.webwiz.models.Target.*
+import org.jetbrains.webwiz.models.GradlePlugin
+import org.jetbrains.webwiz.models.ProjectInfo
+import org.jetbrains.webwiz.models.Target.ANDROID
+import org.jetbrains.webwiz.models.isNativeTargetPresent
 
 interface ProjectFile {
     val path: String
     val content: String
 }
 
-fun ProjectInfo.generate(moduleName: String = "shared"): List<ProjectFile> = mutableListOf<ProjectFile>().apply {
+fun ProjectInfo.generate(): List<ProjectFile> = mutableListOf<ProjectFile>().apply {
     val info = this@generate.normalize()
 
     add(Gitignore())
@@ -22,31 +24,31 @@ fun ProjectInfo.generate(moduleName: String = "shared"): List<ProjectFile> = mut
     add(SettingsGradle(moduleName))
     add(GradleProperties())
 
-    add(ModuleBuildGradle(moduleName, info))
+    add(ModuleBuildGradle(info))
 
-    add(CommonPlatformKt(moduleName, info))
+    add(CommonPlatformKt(info))
     info.targets.forEach { target ->
-        add(TargetPlatformKt(moduleName, target, info))
+        add(TargetPlatformKt(target, info))
     }
     if (info.targets.isNativeTargetPresent()) {
-        add(IntermediatePlatformKt(moduleName, "native", info))
+        add(IntermediatePlatformKt("native", info))
     }
 
     if (info.gradlePlugins.contains(GradlePlugin.APPLICATION)) {
-        add(ApplicationKt(moduleName, info))
+        add(ApplicationKt(info))
     }
 
     if (info.targets.contains(ANDROID)) {
-        add(AndroidManifestXml(moduleName, info))
+        add(AndroidManifestXml(info))
     }
 
     if (info.enableTests) {
-        add(CommonPlatformTestKt(moduleName, info))
+        add(CommonPlatformTestKt(info))
         info.targets.forEach { target ->
-            add(TargetPlatformTestKt(moduleName, target, info))
+            add(TargetPlatformTestKt(target, info))
         }
         if (info.targets.isNativeTargetPresent()) {
-            add(IntermediatePlatformTestKt(moduleName, "native", info))
+            add(IntermediatePlatformTestKt("native", info))
         }
     }
 }

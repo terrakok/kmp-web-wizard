@@ -1,11 +1,16 @@
 package org.jetbrains.webwiz.generator.files
 
-import org.jetbrains.webwiz.generator.*
-import org.jetbrains.webwiz.models.*
+import org.jetbrains.webwiz.generator.NAN
+import org.jetbrains.webwiz.generator.ProjectFile
+import org.jetbrains.webwiz.generator.deleteNans
+import org.jetbrains.webwiz.models.GradlePlugin
+import org.jetbrains.webwiz.models.KmpLibrary
+import org.jetbrains.webwiz.models.ProjectInfo
 import org.jetbrains.webwiz.models.Target
+import org.jetbrains.webwiz.models.isNativeTargetPresent
 
-class ModuleBuildGradle(val moduleName: String, val projectInfo: ProjectInfo) : ProjectFile {
-    override val path = "$moduleName/build.gradle.kts"
+class ModuleBuildGradle(val projectInfo: ProjectInfo) : ProjectFile {
+    override val path = "${projectInfo.moduleName}/build.gradle.kts"
     override val content: String
         get() = """
 ${generatePluginsBlock()}
@@ -175,15 +180,9 @@ application {
 """.trimIndent()
 
     private fun generatePublishPluginConfig(version: String) = """
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "${projectInfo.packageName}"
-            artifactId = "${projectInfo.projectName}"
-            version = "$version"
-        }
-    }
-}
+//required for maven publication
+group = "${projectInfo.packageName}"
+version = "$version"
 
 """.trimIndent()
 

@@ -4,8 +4,8 @@ import org.jetbrains.webwiz.generator.ProjectFile
 import org.jetbrains.webwiz.models.ProjectInfo
 import org.jetbrains.webwiz.models.Target
 
-class CommonPlatformKt(val moduleName: String, val projectInfo: ProjectInfo) : ProjectFile {
-    override val path = "$moduleName/src/commonMain/kotlin" +
+class CommonPlatformKt(val projectInfo: ProjectInfo) : ProjectFile {
+    override val path = "${projectInfo.moduleName}/src/commonMain/kotlin" +
             "/${projectInfo.packageName.replace('.', '/')}" +
             "/Platform.kt"
     override val content: String
@@ -20,8 +20,8 @@ class Greeting {
     """.trimIndent()
 }
 
-class TargetPlatformKt(val moduleName: String, val target: Target, val projectInfo: ProjectInfo) : ProjectFile {
-    override val path = "$moduleName/src/${target.targetName}Main/kotlin" +
+class TargetPlatformKt(val target: Target, val projectInfo: ProjectInfo) : ProjectFile {
+    override val path = "${projectInfo.moduleName}/src/${target.targetName}Main/kotlin" +
             "/${projectInfo.packageName.replace('.', '/')}" +
             "/Platform.kt"
     override val content: String
@@ -32,8 +32,8 @@ actual val platform: String = "${target.targetName}"
     """.trimIndent()
 }
 
-class IntermediatePlatformKt(val moduleName: String, val intermediateName: String, val projectInfo: ProjectInfo) : ProjectFile {
-    override val path = "$moduleName/src/${intermediateName}Main/kotlin" +
+class IntermediatePlatformKt(val intermediateName: String, val projectInfo: ProjectInfo) : ProjectFile {
+    override val path = "${projectInfo.moduleName}/src/${intermediateName}Main/kotlin" +
             "/${projectInfo.packageName.replace('.', '/')}" +
             "/Platform.kt"
     override val content: String

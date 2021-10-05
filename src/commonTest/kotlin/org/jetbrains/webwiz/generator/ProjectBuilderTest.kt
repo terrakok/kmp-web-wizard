@@ -3,9 +3,9 @@ package org.jetbrains.webwiz.generator
 import org.jetbrains.webwiz.generator.files.ModuleBuildGradle
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
-import org.jetbrains.webwiz.models.Target.*
 import org.jetbrains.webwiz.models.KotlinVersion
 import org.jetbrains.webwiz.models.ProjectInfo
+import org.jetbrains.webwiz.models.Target.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,6 +16,7 @@ internal class ProjectBuilderTest {
     fun testGeneratedStructure() {
         val projectInfo = ProjectInfo(
             "wizard-sample",
+            "library",
             "my.test.package",
             KotlinVersion.Stable,
             setOf(JVM, JS, IOS, ANDROID),
@@ -33,20 +34,20 @@ internal class ProjectBuilderTest {
             build.gradle.kts
             settings.gradle.kts
             gradle.properties
-            shared/build.gradle.kts
-            shared/src/commonMain/kotlin/my/test/package/Platform.kt
-            shared/src/jvmMain/kotlin/my/test/package/Platform.kt
-            shared/src/jsMain/kotlin/my/test/package/Platform.kt
-            shared/src/iosMain/kotlin/my/test/package/Platform.kt
-            shared/src/androidMain/kotlin/my/test/package/Platform.kt
-            shared/src/nativeMain/kotlin/my/test/package/Platform.kt
-            shared/src/androidMain/AndroidManifest.xml
-            shared/src/commonTest/kotlin/my/test/package/CommonTest.kt
-            shared/src/jvmTest/kotlin/my/test/package/PlatformTest.kt
-            shared/src/jsTest/kotlin/my/test/package/PlatformTest.kt
-            shared/src/iosTest/kotlin/my/test/package/PlatformTest.kt
-            shared/src/androidTest/kotlin/my/test/package/PlatformTest.kt
-            shared/src/nativeTest/kotlin/my/test/package/NativeTest.kt
+            library/build.gradle.kts
+            library/src/commonMain/kotlin/my/test/package/Platform.kt
+            library/src/jvmMain/kotlin/my/test/package/Platform.kt
+            library/src/jsMain/kotlin/my/test/package/Platform.kt
+            library/src/iosMain/kotlin/my/test/package/Platform.kt
+            library/src/androidMain/kotlin/my/test/package/Platform.kt
+            library/src/nativeMain/kotlin/my/test/package/Platform.kt
+            library/src/androidMain/AndroidManifest.xml
+            library/src/commonTest/kotlin/my/test/package/CommonTest.kt
+            library/src/jvmTest/kotlin/my/test/package/PlatformTest.kt
+            library/src/jsTest/kotlin/my/test/package/PlatformTest.kt
+            library/src/iosTest/kotlin/my/test/package/PlatformTest.kt
+            library/src/androidTest/kotlin/my/test/package/PlatformTest.kt
+            library/src/nativeTest/kotlin/my/test/package/NativeTest.kt
         """.trimIndent()
         assertEquals(expect, actual)
     }
@@ -55,6 +56,7 @@ internal class ProjectBuilderTest {
     fun testGeneratedBuildConfig() {
         val projectInfo = ProjectInfo(
             "wizard-sample",
+            "lib",
             "my.test.package",
             KotlinVersion.EAP,
             setOf(JVM, JS, IOS, ANDROID),
@@ -141,15 +143,9 @@ internal class ProjectBuilderTest {
                 }
             }
             
-            publishing {
-                publications {
-                    create<MavenPublication>("maven") {
-                        groupId = "my.test.package"
-                        artifactId = "wizard-sample"
-                        version = "0.1"
-                    }
-                }
-            }
+            //required for maven publication
+            group = "my.test.package"
+            version = "0.1"
             
         """.trimIndent()
         assertEquals(expect, actual)

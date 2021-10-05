@@ -2,6 +2,7 @@ package org.jetbrains.webwiz.models
 
 data class ProjectInfo(
     val projectName: String,
+    val moduleName: String,
     val packageName: String,
     val kotlinVersion: KotlinVersion,
     val targets: Set<Target>,
@@ -10,8 +11,8 @@ data class ProjectInfo(
     val enableTests: Boolean
 ) {
     fun validate() {
-        require(!projectName.contains(' ')) {
-            "project name contains space character"
+        require(!moduleName.contains(' ')) {
+            "module name contains space character"
         }
         require(gradlePlugins.all { it.canBeApplied(targets) }) {
             "incorrect gradle plugin was used for current set of targets"
@@ -22,7 +23,7 @@ data class ProjectInfo(
     }
 
     fun normalize() = copy(
-        projectName = projectName.replace(' ', '_'),
+        moduleName = moduleName.replace(' ', '_'),
         gradlePlugins = gradlePlugins.filter { it.canBeApplied(targets) }.toSet(),
         dependencies = dependencies.filter { dep -> dep.targets == null || targets.all { dep.targets.contains(it) } }.toSet()
     )

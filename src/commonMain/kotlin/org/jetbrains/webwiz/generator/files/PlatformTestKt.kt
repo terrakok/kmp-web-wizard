@@ -1,12 +1,12 @@
 package org.jetbrains.webwiz.generator.files
 
 import org.jetbrains.webwiz.generator.ProjectFile
-import org.jetbrains.webwiz.models.Target
 import org.jetbrains.webwiz.models.ProjectInfo
+import org.jetbrains.webwiz.models.Target
 import org.jetbrains.webwiz.models.isJvm
 
-class CommonPlatformTestKt(val moduleName: String, val projectInfo: ProjectInfo) : ProjectFile {
-    override val path = "$moduleName/src/commonTest/kotlin" +
+class CommonPlatformTestKt(val projectInfo: ProjectInfo) : ProjectFile {
+    override val path = "${projectInfo.moduleName}/src/commonTest/kotlin" +
         "/${projectInfo.packageName.replace('.', '/')}" +
         "/CommonTest.kt"
     override val content: String
@@ -26,9 +26,9 @@ class CommonTest {
 """.trimIndent()
 }
 
-class TargetPlatformTestKt(val moduleName: String, val target: Target, val projectInfo: ProjectInfo) :
+class TargetPlatformTestKt(val target: Target, val projectInfo: ProjectInfo) :
     ProjectFile {
-    override val path = "$moduleName/src/${target.targetName}Test/kotlin" +
+    override val path = "${projectInfo.moduleName}/src/${target.targetName}Test/kotlin" +
         "/${projectInfo.packageName.replace('.', '/')}" +
         "/PlatformTest.kt"
     override val content: String = if (target.isJvm()) {
@@ -65,13 +65,12 @@ class PlatformTest {
 }
 
 class IntermediatePlatformTestKt(
-    val moduleName: String,
     val intermediateName: String,
     val projectInfo: ProjectInfo
 ) : ProjectFile {
     private val interName = intermediateName.lowercase().replaceFirstChar { it.uppercaseChar() }
 
-    override val path = "$moduleName/src/${intermediateName.lowercase()}Test/kotlin" +
+    override val path = "${projectInfo.moduleName}/src/${intermediateName.lowercase()}Test/kotlin" +
         "/${projectInfo.packageName.replace('.', '/')}" +
         "/${interName}Test.kt"
     override val content: String
