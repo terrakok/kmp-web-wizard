@@ -73,6 +73,10 @@ internal class ProjectBuilderTest {
                 `maven-publish`
             }
             
+            /* required for maven publication */
+            group = "my.test.package"
+            version = "0.1"
+            
             kotlin {
                 jvm()
                 js()
@@ -142,10 +146,6 @@ internal class ProjectBuilderTest {
                     targetSdk = 31
                 }
             }
-            
-            //required for maven publication
-            group = "my.test.package"
-            version = "0.1"
             
         """.trimIndent()
         assertEquals(expect, actual)

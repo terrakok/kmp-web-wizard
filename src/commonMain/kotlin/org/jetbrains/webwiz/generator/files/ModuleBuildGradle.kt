@@ -15,11 +15,11 @@ class ModuleBuildGradle(val projectInfo: ProjectInfo) : ProjectFile {
         get() = """
 ${generatePluginsBlock()}
 
+${if (GradlePlugin.PUBLISH in projectInfo.gradlePlugins) generatePublishPluginConfig("0.1") else NAN}
 ${generateKotlinBlock()}
 
 ${if (Target.ANDROID in projectInfo.targets) generateAndroidPluginConfig("21", "31") else NAN}
 ${if (GradlePlugin.APPLICATION in projectInfo.gradlePlugins) generateApplicationPluginConfig() else NAN}
-${if (GradlePlugin.PUBLISH in projectInfo.gradlePlugins) generatePublishPluginConfig("0.1") else NAN}
         """.trimIndent().deleteNans()
 
     private fun generatePluginsBlock(): String = """
@@ -180,7 +180,7 @@ application {
 """.trimIndent()
 
     private fun generatePublishPluginConfig(version: String) = """
-//required for maven publication
+/* required for maven publication */
 group = "${projectInfo.packageName}"
 version = "$version"
 
