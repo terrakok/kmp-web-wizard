@@ -67,13 +67,12 @@ fun LibrariesChips() {
 fun PluginsChips() {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         GradlePlugin.values().forEach { t ->
+            val targets = projectInfoState.value.targets
 
-            if (t == GradlePlugin.APPLICATION
-                && (!projectInfoState.value.targets.contains(Target.JVM)
-                        || projectInfoState.value.targets.contains(Target.ANDROID))
-            ) {
+            if (t.mandatory.any { !targets.contains(it) } || t.forbidden.any { targets.contains(it) }) {
                 return@forEach DisabledChip(t.userName)
             }
+
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
                 CheckboxInput(projectInfoState.value.gradlePlugins.contains(t)) {
                     onChange { event ->
