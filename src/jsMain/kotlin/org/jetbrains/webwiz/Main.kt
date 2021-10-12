@@ -37,7 +37,7 @@ fun main() {
 }
 
 private fun generateProject(project: ProjectInfo) {
-    window.fetch(window.location.origin + window.location.pathname + "/binaries/gradle-wrapper")
+    window.fetch("./binaries/gradle-wrapper")
         .then { response -> response.arrayBuffer() }
         .then { gradleWrapperBlob ->
             val zip = JSZip()
