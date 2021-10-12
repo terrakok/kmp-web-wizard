@@ -21,7 +21,7 @@ fun ProjectInfo.generate(): List<ProjectFile> = mutableListOf<ProjectFile>().app
     add(GradleWrapperJar())
 
     add(RootBuildGradle(info))
-    add(SettingsGradle(moduleName))
+    add(SettingsGradle(projectName, moduleName))
     add(GradleProperties())
 
     add(ModuleBuildGradle(info))

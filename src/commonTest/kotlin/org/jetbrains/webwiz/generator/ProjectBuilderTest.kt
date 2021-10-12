@@ -1,6 +1,7 @@
 package org.jetbrains.webwiz.generator
 
 import org.jetbrains.webwiz.generator.files.ModuleBuildGradle
+import org.jetbrains.webwiz.generator.files.SettingsGradle
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.KotlinVersion
@@ -150,6 +151,34 @@ internal class ProjectBuilderTest {
                 }
             }
             
+        """.trimIndent()
+        assertEquals(expect, actual)
+    }
+
+    @Test
+    fun testGeneratedSettingsGradle() {
+        val projectInfo = ProjectInfo(
+            "New Project",
+            "module",
+            "my.test.package",
+            KotlinVersion.EAP,
+            setOf(JVM, JS, IOS, ANDROID),
+            setOf(KmpLibrary.SERIALIZATION),
+            setOf(GradlePlugin.PUBLISH),
+            true
+        )
+        val actual = projectInfo.generate().first { it is SettingsGradle }.content
+        val expect = """
+            pluginManagement {
+                repositories {
+                    google()
+                    gradlePluginPortal()
+                    mavenCentral()
+                }
+            }
+
+            rootProject.name = "New_Project"
+            include(":module")
         """.trimIndent()
         assertEquals(expect, actual)
     }
