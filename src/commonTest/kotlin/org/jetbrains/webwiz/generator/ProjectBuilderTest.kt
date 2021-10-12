@@ -79,7 +79,10 @@ internal class ProjectBuilderTest {
             
             kotlin {
                 jvm()
-                js()
+                js {
+                    browser()
+                    nodejs()
+                }
                 iosX64()
                 iosArm64()
                 /* iosSimulatorArm64() sure all ios dependencies support this target */

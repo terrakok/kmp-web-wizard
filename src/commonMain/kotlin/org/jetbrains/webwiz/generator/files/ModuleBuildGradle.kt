@@ -45,8 +45,8 @@ kotlin {
     ) = targets.joinToString("\n    ") {
         when (it) {
             Target.ANDROID -> "android()"
-            Target.JVM -> "jvm()" + (if (projectInfo.gradlePlugins.contains(GradlePlugin.APPLICATION)) " { withJava() }" else "")
-            Target.JS -> "js()"
+            Target.JVM -> if (projectInfo.gradlePlugins.contains(GradlePlugin.APPLICATION)) "jvm {\n        withJava()\n    }" else "jvm()"
+            Target.JS -> "js {\n        browser()\n        nodejs()\n    }"
             Target.WASM -> "wasm32()"
             Target.ANDROID_NATIVE -> "androidNativeArm64()"
             Target.LINUX -> "linuxX64()"
