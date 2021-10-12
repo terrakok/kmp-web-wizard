@@ -34,9 +34,5 @@ allprojects {
         ${if (projectInfo.kotlinVersion == KotlinVersion.EAP) "maven(\"https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/\")" else NAN}
     }
 }
-
-tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
-}
     """.trimIndent().deleteNans()
 }
