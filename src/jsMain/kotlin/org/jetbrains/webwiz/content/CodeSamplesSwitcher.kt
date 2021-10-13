@@ -24,7 +24,7 @@ fun KotlinVersionSwitcher(state: KotlinVersion, onSelect: (KotlinVersion) -> Uni
     Form(attrs = {
         classes(KotlinSwitcherStylesheet.boxed)
     }) {
-        KotlinVersion.values().forEach { version ->
+        KotlinVersion.values().filter { it != KotlinVersion.Dev }.forEach { version ->
             Input(type = InputType.Radio, attrs = {
                 name("code-snippet")
                 value("snippet$version")
