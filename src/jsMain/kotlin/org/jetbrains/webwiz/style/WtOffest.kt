@@ -2,10 +2,8 @@ package org.jetbrains.webwiz.style
 
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.keywords.CSSAutoKeyword
 import org.jetbrains.compose.web.css.selectors.descendant
 import org.jetbrains.compose.web.css.selectors.selector
-import org.jetbrains.compose.web.css.selectors.type
 
 object WtOffsets : StyleSheet(AppStylesheet) {
     val wtTopOffset96 by style {
@@ -42,11 +40,6 @@ object WtOffsets : StyleSheet(AppStylesheet) {
                 marginTop(24.px)
             }
         }
-    }
-
-    val kotlinSwitcherStyle by style {
-        maxWidth(202.px)
-        minWidth(202.px)
     }
 
     val textInputLabelsStyle by style {

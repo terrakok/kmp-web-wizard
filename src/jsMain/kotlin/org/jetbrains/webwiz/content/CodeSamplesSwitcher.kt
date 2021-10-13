@@ -7,9 +7,12 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.selectors.CSSSelector
 import org.jetbrains.compose.web.css.selectors.descendant
 import org.jetbrains.compose.web.css.selectors.selector
-import org.jetbrains.webwiz.style.AppStylesheet
+import org.jetbrains.compose.web.dom.Form
+import org.jetbrains.compose.web.dom.Input
+import org.jetbrains.compose.web.dom.Label
+import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.webwiz.models.KotlinVersion
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.webwiz.style.AppStylesheet
 
 private object SwitcherVariables {
     val labelWidth by variable<CSSpxValue>()
@@ -17,16 +20,16 @@ private object SwitcherVariables {
 }
 
 @Composable
-fun KotlinVersionSwitcher(versions: Array<KotlinVersion>, state: Map<KotlinVersion, Boolean>, onSelect: (KotlinVersion) -> Unit) {
+fun KotlinVersionSwitcher(state: KotlinVersion, onSelect: (KotlinVersion) -> Unit) {
     Form(attrs = {
         classes(KotlinSwitcherStylesheet.boxed)
     }) {
-        versions.forEach { version ->
+        KotlinVersion.values().forEach { version ->
             Input(type = InputType.Radio, attrs = {
                 name("code-snippet")
                 value("snippet$version")
                 id("snippet$version")
-                checked(state[version]!!)
+                checked(version == state)
                 onClick { onSelect(version) }
             })
             Label(forId = "snippet$version") { Text("${version.name}") }
@@ -37,13 +40,6 @@ fun KotlinVersionSwitcher(versions: Array<KotlinVersion>, state: Map<KotlinVersi
 
 object KotlinSwitcherStylesheet : StyleSheet(AppStylesheet) {
     val boxed by style {
-
-        media(mediaMaxWidth(202.px)) {
-            self style {
-                SwitcherVariables.labelWidth(36.px)
-                SwitcherVariables.labelPadding(5.px)
-            }
-        }
 
         backgroundColor(Color("rgb(244,244,244)"))
 

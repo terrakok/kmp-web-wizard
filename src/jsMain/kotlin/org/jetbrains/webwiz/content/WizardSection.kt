@@ -36,8 +36,6 @@ private val defaultProject = ProjectInfo(
 
 internal val projectInfoState = mutableStateOf(defaultProject)
 
-val switcherState = mutableStateOf(mapOf(KotlinVersion.EAP to false, KotlinVersion.Stable to true))
-
 @Composable
 @OptIn(ExperimentalComposeWebWidgetsApi::class)
 fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
@@ -100,25 +98,9 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
                         Text("Kotlin version")
                     }
 
-                    Div({ classes(WtOffsets.kotlinSwitcherStyle) }) {
-                        KotlinVersionSwitcher(
-                            KotlinVersion.values(),
-                            switcherState.value
-                        )
-                        {
+                    Div {
+                        KotlinVersionSwitcher(projectInfoState.value.kotlinVersion) {
                             projectInfoState.value = projectInfoState.value.copy(kotlinVersion = it)
-                            switcherState.value = mapOf(
-                                KotlinVersion.EAP to (
-                                    when (it) {
-                                        KotlinVersion.EAP -> !switcherState.value[KotlinVersion.EAP]!!
-                                        KotlinVersion.Stable -> switcherState.value[KotlinVersion.Stable]!!
-                                    }),
-                                KotlinVersion.Stable to (
-                                    when (it) {
-                                        KotlinVersion.EAP -> switcherState.value[KotlinVersion.EAP]!!
-                                        KotlinVersion.Stable -> !switcherState.value[KotlinVersion.Stable]!!
-                                    })
-                            )
                         }
                     }
                 }

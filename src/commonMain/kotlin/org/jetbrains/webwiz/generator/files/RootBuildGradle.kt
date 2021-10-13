@@ -18,7 +18,7 @@ buildscript {
         gradlePluginPortal()
         google()
         mavenCentral()
-        ${if (projectInfo.kotlinVersion == KotlinVersion.EAP) "maven(\"https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/\")" else NAN}
+        ${if (projectInfo.kotlinVersion == KotlinVersion.Dev) "maven(\"https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/\")" else NAN}
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${projectInfo.kotlinVersion.versionName}")
@@ -31,7 +31,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        ${if (projectInfo.kotlinVersion == KotlinVersion.EAP) "maven(\"https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/\")" else NAN}
+        ${if (projectInfo.kotlinVersion == KotlinVersion.Dev) "maven(\"https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/\")" else NAN}
     }
 }
     """.trimIndent().deleteNans()
