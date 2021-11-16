@@ -17,7 +17,7 @@ fun TargetChips() {
                     onChange { event ->
                         val current = projectInfoState.value.targets.toMutableSet()
                         val new: Set<Target> = when {
-                            !event.value -> current.plus(t)
+                            event.value -> current.plus(t)
                             current.size > 1 -> current.minus(t)
                             else -> current
                         }
@@ -48,7 +48,7 @@ fun LibrariesChips() {
                     onChange { event ->
                         val current = projectInfoState.value.dependencies.toMutableSet()
                         val new: Set<KmpLibrary> = when {
-                            !event.value -> current.plus(t)
+                            event.value -> current.plus(t)
                             else -> current.minus(t)
                         }
                         projectInfoState.value = projectInfoState.value.copy(dependencies = new)
@@ -78,7 +78,7 @@ fun PluginsChips() {
                     onChange { event ->
                         val current = projectInfoState.value.gradlePlugins.toMutableSet()
                         val new: Set<GradlePlugin> = when {
-                            !event.value -> current.plus(t)
+                            event.value -> current.plus(t)
                             else -> current.minus(t)
                         }
                         projectInfoState.value = projectInfoState.value.copy(gradlePlugins = new)

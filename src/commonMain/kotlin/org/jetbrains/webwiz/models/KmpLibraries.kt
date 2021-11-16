@@ -33,7 +33,7 @@ enum class KmpLibrary(
             Target.WINDOWS
         ),
         "KotlinX Serialization",
-        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2"
+        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1"
     ),
     DATE_TIME(
         setOf(
@@ -48,7 +48,7 @@ enum class KmpLibrary(
             Target.WINDOWS
         ),
         "KotlinX DateTime",
-        "org.jetbrains.kotlinx:kotlinx-datetime:0.2.1"
+        "org.jetbrains.kotlinx:kotlinx-datetime:0.3.1"
     ),
     LOGGER(
         setOf(
