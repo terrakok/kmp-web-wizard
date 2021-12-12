@@ -29,6 +29,7 @@ plugins {
     ${if (Target.ANDROID in projectInfo.targets) "id(\"com.android.library\")" else NAN}
     ${if (GradlePlugin.APPLICATION in projectInfo.gradlePlugins) "application" else NAN}
     ${if (GradlePlugin.PUBLISH in projectInfo.gradlePlugins) "`maven-publish`" else NAN}
+    ${if (GradlePlugin.SQL_DELIGHT in projectInfo.gradlePlugins) "id(\"com.squareup.sqldelight\")" else NAN}
 }
 """.trimIndent().deleteNans()
 
