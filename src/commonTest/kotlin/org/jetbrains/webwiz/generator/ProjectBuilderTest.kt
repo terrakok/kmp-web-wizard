@@ -22,6 +22,8 @@ internal class ProjectBuilderTest {
             KotlinVersion.Stable,
             setOf(JVM, JS, IOS, ANDROID),
             emptySet(),
+            emptySet(),
+            emptySet(),
             setOf(GradlePlugin.PUBLISH),
             true
         )
@@ -62,6 +64,8 @@ internal class ProjectBuilderTest {
             KotlinVersion.EAP,
             setOf(JVM, JS, IOS, ANDROID),
             setOf(KmpLibrary.SERIALIZATION),
+            emptySet(),
+            emptySet(),
             setOf(GradlePlugin.PUBLISH),
             true
         )
@@ -164,6 +168,8 @@ internal class ProjectBuilderTest {
             KotlinVersion.EAP,
             setOf(JVM, JS, IOS, ANDROID),
             setOf(KmpLibrary.SERIALIZATION),
+            emptySet(),
+            emptySet(),
             setOf(GradlePlugin.PUBLISH),
             true
         )

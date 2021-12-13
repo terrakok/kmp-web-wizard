@@ -31,6 +31,8 @@ private val defaultProject = ProjectInfo(
     targets = setOf(Target.ANDROID, Target.IOS),
     enableTests = false,
     dependencies = setOf(KmpLibrary.SERIALIZATION),
+    singleTargetDependencies = emptySet(),
+    nativeTargetLibraries = emptySet(),
     gradlePlugins = emptySet()
 ).normalize()
 
@@ -122,6 +124,24 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
                         Text("Libraries")
                     }
                     LibrariesChips()
+                }
+            }
+
+            Row {
+                Div({ classes(WtOffsets.rowTargetsItems) }) {
+                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                        Text("Single Target Libraries")
+                    }
+                    SingleTargetLibraryChips()
+                }
+            }
+
+            Row {
+                Div({ classes(WtOffsets.rowTargetsItems) }) {
+                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                        Text("Native Target Libraries")
+                    }
+                    NativeTargetLibraryChips()
                 }
             }
 

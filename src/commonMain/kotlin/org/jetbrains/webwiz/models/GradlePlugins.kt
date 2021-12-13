@@ -17,13 +17,7 @@ enum class GradlePlugin(
     ),
     SQL_DELIGHT(
         emptySet(),
-        setOf(
-            Target.ANDROID_NATIVE,
-            Target.LINUX,
-            Target.WASM,
-            Target.TV_OS,
-            Target.WATCH_OS
-        ),
+        setOf(Target.WASM),
         "SQLDelight"
     );
 
