@@ -2,10 +2,18 @@ package org.jetbrains.webwiz.content
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.attributes.disabled
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.CheckboxInput
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Label
+import org.jetbrains.compose.web.dom.Span
+import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
+import org.jetbrains.webwiz.models.NativeTargetLibrary
+import org.jetbrains.webwiz.models.SingleTargetLibrary
 import org.jetbrains.webwiz.models.Target
+import org.jetbrains.webwiz.models.isCommonNativeTargetPresent
+import org.jetbrains.webwiz.models.isNativeTargetPresent
 import org.jetbrains.webwiz.style.WtOffsets
 
 @Composable
@@ -52,6 +60,64 @@ fun LibrariesChips() {
                             else -> current.minus(t)
                         }
                         projectInfoState.value = projectInfoState.value.copy(dependencies = new)
+                    }
+                    id("checkbox_${t.name}")
+                }
+                Label(forId = "checkbox_${t.name}") {
+                    Text(t.userName)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SingleTargetLibraryChips() {
+    Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
+        SingleTargetLibrary.values().forEach { t ->
+
+            if (t.target !in projectInfoState.value.targets ) {
+                return@forEach DisabledChip(t.userName)
+            }
+
+            return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
+                CheckboxInput(projectInfoState.value.singleTargetDependencies.contains(t)) {
+                    onChange { event ->
+                        val current = projectInfoState.value.singleTargetDependencies.toMutableSet()
+                        val new: Set<SingleTargetLibrary> = when {
+                            event.value -> current.plus(t)
+                            else -> current.minus(t)
+                        }
+                        projectInfoState.value = projectInfoState.value.copy(singleTargetDependencies = new)
+                    }
+                    id("checkbox_${t.name}")
+                }
+                Label(forId = "checkbox_${t.name}") {
+                    Text(t.userName)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NativeTargetLibraryChips() {
+    Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
+        NativeTargetLibrary.values().forEach { t ->
+
+            if (!projectInfoState.value.targets.isCommonNativeTargetPresent() ) {
+                return@forEach DisabledChip(t.userName)
+            }
+
+            return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
+                CheckboxInput(projectInfoState.value.nativeTargetLibraries.contains(t)) {
+                    onChange { event ->
+                        val current = projectInfoState.value.nativeTargetLibraries.toMutableSet()
+                        val new: Set<NativeTargetLibrary> = when {
+                            event.value -> current.plus(t)
+                            else -> current.minus(t)
+                        }
+                        projectInfoState.value = projectInfoState.value.copy(nativeTargetLibraries = new)
                     }
                     id("checkbox_${t.name}")
                 }

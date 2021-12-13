@@ -6,6 +6,10 @@ import org.jetbrains.webwiz.generator.deleteNans
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.ProjectInfo
+import org.jetbrains.webwiz.models.SourceSetDelegate
+import org.jetbrains.webwiz.models.SourceSetDelegate.CREATING
+import org.jetbrains.webwiz.models.SourceSetDelegate.GETTING
+import org.jetbrains.webwiz.models.SourceSetType.MAIN
 import org.jetbrains.webwiz.models.Target
 import org.jetbrains.webwiz.models.isNativeTargetPresent
 
@@ -84,11 +88,32 @@ kotlin {
 """.trimMargin().deleteNans()
 
     private fun commonMainSourceSet(): String {
-        val deps = projectInfo.dependencies.map { "implementation(\"${it.dep}\")" }
+        val deps = projectInfo.dependencies.filter {
+            it.sourceSetType.sourceSetTypeName == MAIN.sourceSetTypeName
+        }.map { "implementation(\"${it.dep}\")" }
         return if (deps.isEmpty()) {
             "  |        val commonMain by getting"
         } else {
             """|        val commonMain by getting {
+               |            dependencies {
+               |                ${deps.joinToString("\n|                ")}
+               |            }
+               |        }"""
+        }
+    }
+
+    private fun singleSourceSet(
+        target: Target,
+        compilation: String,
+        sourceSetDelegate: SourceSetDelegate
+    ): String {
+        val deps = projectInfo.singleTargetDependencies
+            .filter { it.target == target && it.sourceSetType.sourceSetTypeName == compilation }
+            .map { "implementation(\"${it.dep}\")" }
+        return if (deps.isEmpty()) {
+            "val ${target.targetName}$compilation by ${sourceSetDelegate.delegate}"
+        } else {
+            """val ${target.targetName}$compilation by ${sourceSetDelegate.delegate} {
                |            dependencies {
                |                ${deps.joinToString("\n|                ")}
                |            }
@@ -107,9 +132,9 @@ kotlin {
         val intention = "\n|        "
         return projectInfo.targets.joinToString(intention) {
             when (it) {
-                Target.ANDROID -> "val android$compilation by getting"
-                Target.JVM -> "val jvm$compilation by getting"
-                Target.JS -> "val js$compilation by getting"
+                Target.ANDROID -> singleSourceSet(Target.ANDROID, compilation, GETTING)
+                Target.JVM -> singleSourceSet(Target.JVM, compilation, GETTING)
+                Target.JS -> singleSourceSet(Target.JS, compilation, GETTING)
                 Target.WASM -> "val wasm32$compilation by getting"
                 Target.ANDROID_NATIVE -> "val androidNativeArm64$compilation by getting"
                 Target.LINUX -> "val linuxX64$compilation by getting"
@@ -132,7 +157,7 @@ kotlin {
                 Target.ANDROID_NATIVE -> "val androidNative$compilation by creating"
                 Target.LINUX -> "val linux$compilation by creating"
                 Target.MACOS -> "val macos$compilation by creating"
-                Target.IOS -> "val ios$compilation by creating"
+                Target.IOS -> singleSourceSet(Target.IOS, compilation, CREATING)
                 Target.TV_OS -> "val tvos$compilation by creating"
                 Target.WATCH_OS -> "val watchos$compilation by creating"
                 Target.WINDOWS -> "val windows$compilation by creating"
@@ -158,7 +183,27 @@ kotlin {
         }
     }
 
-    private fun nativeSourceSets(compilation: String) = "val native$compilation by creating"
+    private fun nativeUmbrellaSourceSet(
+        compilation: String,
+        sourceSetDelegate: SourceSetDelegate
+    ): String {
+        val deps = projectInfo.nativeTargetLibraries
+            .filter { it.sourceSetType.sourceSetTypeName == compilation }
+            .map { "implementation(\"${it.dep}\")" }
+        return if (deps.isEmpty()) {
+            "val native$compilation by ${sourceSetDelegate.delegate}"
+        } else {
+            """val native$compilation by ${sourceSetDelegate.delegate} {
+               |            dependencies {
+               |                ${deps.joinToString("\n|                ")}
+               |            }
+               |        }"""
+        }
+    }
+
+    private fun nativeSourceSets(compilation: String): String {
+        return nativeUmbrellaSourceSet(compilation, CREATING)
+    }
     private fun nativeSourceSetsDependencies(compilation: String) = "native$compilation.dependsOn(common$compilation)"
 
     private fun generateAndroidPluginConfig(minSdk: String, compileSdk: String) = """
