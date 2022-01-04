@@ -97,7 +97,7 @@ internal class ProjectBuilderTest {
                     /* Main source sets */
                     val commonMain by getting {
                         dependencies {
-                            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
+                            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                         }
                     }
                     val jvmMain by getting
