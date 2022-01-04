@@ -90,7 +90,7 @@ internal class ProjectBuilderTest {
                 }
                 iosX64()
                 iosArm64()
-                /* iosSimulatorArm64() sure all ios dependencies support this target */
+                iosSimulatorArm64()
                 android()
             
                 sourceSets {
@@ -104,7 +104,7 @@ internal class ProjectBuilderTest {
                     val jsMain by getting
                     val iosX64Main by getting 
                     val iosArm64Main by getting
-                    /* val iosSimulatorArm64Main by getting */
+                    val iosSimulatorArm64Main by getting
                     val androidMain by getting
                     val iosMain by creating
                     val nativeMain by creating
@@ -115,7 +115,7 @@ internal class ProjectBuilderTest {
                     iosMain.dependsOn(nativeMain)
                     iosX64Main.dependsOn(iosMain)
                     iosArm64Main.dependsOn(iosMain)
-                    /* iosSimulatorArm64Main.dependsOn(iosMain) */
+                    iosSimulatorArm64Main.dependsOn(iosMain)
                     androidMain.dependsOn(commonMain)
                     nativeMain.dependsOn(commonMain)
             
@@ -129,7 +129,7 @@ internal class ProjectBuilderTest {
                     val jsTest by getting
                     val iosX64Test by getting 
                     val iosArm64Test by getting
-                    /* val iosSimulatorArm64Test by getting */
+                    val iosSimulatorArm64Test by getting
                     val androidTest by getting
                     val iosTest by creating
                     val nativeTest by creating
@@ -140,7 +140,7 @@ internal class ProjectBuilderTest {
                     iosTest.dependsOn(nativeTest)
                     iosX64Test.dependsOn(iosTest)
                     iosArm64Test.dependsOn(iosTest)
-                    /* iosSimulatorArm64Test.dependsOn(iosTest) */
+                    iosSimulatorArm64Test.dependsOn(iosTest)
                     androidTest.dependsOn(commonTest)
                     nativeTest.dependsOn(commonTest)
                 }

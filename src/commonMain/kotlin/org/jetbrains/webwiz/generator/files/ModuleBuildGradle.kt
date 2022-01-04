@@ -54,10 +54,10 @@ kotlin {
             Target.JS -> "js {\n        browser()\n        nodejs()\n    }"
             Target.ANDROID_NATIVE -> "androidNativeArm64()"
             Target.LINUX -> "linuxX64()"
-            Target.MACOS -> "macosX64()\n    /* macosArm64() sure all macos dependencies support this target */"
-            Target.IOS -> "iosX64()\n    iosArm64()\n    /* iosSimulatorArm64() sure all ios dependencies support this target */"
-            Target.TV_OS -> "tvosX64()\n    tvosArm64()\n    /* tvosSimulatorArm64() sure all tvos dependencies support this target */"
-            Target.WATCH_OS -> "watchosX64()\n    watchosArm64()\n    /* watchosSimulatorArm64() sure all watchos dependencies support this target */"
+            Target.MACOS -> "macosX64()\n    macosArm64()"
+            Target.IOS -> "iosX64()\n    iosArm64()\n    iosSimulatorArm64()"
+            Target.TV_OS -> "tvosX64()\n    tvosArm64()\n    tvosSimulatorArm64()"
+            Target.WATCH_OS -> "watchosX64()\n    watchosArm64()\n    watchosSimulatorArm64()"
             Target.WINDOWS -> "mingwX64()"
         }
     }
@@ -136,10 +136,10 @@ kotlin {
                 Target.JS -> singleSourceSet(Target.JS, compilation, GETTING)
                 Target.ANDROID_NATIVE -> "val androidNativeArm64$compilation by getting"
                 Target.LINUX -> "val linuxX64$compilation by getting"
-                Target.MACOS -> "val macosX64$compilation by getting ${intention}/* val macosArm64$compilation by getting */"
-                Target.IOS -> "val iosX64$compilation by getting ${intention}val iosArm64$compilation by getting${intention}/* val iosSimulatorArm64$compilation by getting */"
-                Target.TV_OS -> "val tvosX64$compilation by getting ${intention}val tvosArm64$compilation by getting ${intention}/* val tvosSimulatorArm64$compilation by getting */"
-                Target.WATCH_OS -> "val watchosX64$compilation by getting ${intention}val watchosArm64$compilation by getting  ${intention}/* val watchosSimulatorArm64$compilation by getting */"
+                Target.MACOS -> "val macosX64$compilation by getting ${intention}val macosArm64$compilation by getting"
+                Target.IOS -> "val iosX64$compilation by getting ${intention}val iosArm64$compilation by getting${intention}val iosSimulatorArm64$compilation by getting"
+                Target.TV_OS -> "val tvosX64$compilation by getting ${intention}val tvosArm64$compilation by getting ${intention}val tvosSimulatorArm64$compilation by getting"
+                Target.WATCH_OS -> "val watchosX64$compilation by getting ${intention}val watchosArm64$compilation by getting  ${intention}val watchosSimulatorArm64$compilation by getting"
                 Target.WINDOWS -> "val mingwX64$compilation by getting"
             }
         }
@@ -170,10 +170,10 @@ kotlin {
                 Target.JS -> "js$compilation.dependsOn(common$compilation)"
                 Target.ANDROID_NATIVE -> "androidNative$compilation.dependsOn(native$compilation) ${intention}androidNativeArm64$compilation.dependsOn(androidNative$compilation)"
                 Target.LINUX -> "linux$compilation.dependsOn(native$compilation)${intention}linuxX64$compilation.dependsOn(linux$compilation)"
-                Target.MACOS -> "macos$compilation.dependsOn(native$compilation)${intention}macosX64$compilation.dependsOn(macos$compilation)${intention}/* macosArm64$compilation.dependsOn(macos$compilation) */"
-                Target.IOS -> "ios$compilation.dependsOn(native$compilation)${intention}iosX64$compilation.dependsOn(ios$compilation)${intention}iosArm64$compilation.dependsOn(ios$compilation)${intention}/* iosSimulatorArm64$compilation.dependsOn(ios$compilation) */"
-                Target.TV_OS -> "tvos$compilation.dependsOn(native$compilation)${intention}tvosX64$compilation.dependsOn(tvos$compilation)${intention}tvosArm64$compilation.dependsOn(tvos$compilation)${intention}/* tvosSimulatorArm64$compilation.dependsOn(tvos$compilation) */"
-                Target.WATCH_OS -> "watchos$compilation.dependsOn(native$compilation)${intention}watchosX64$compilation.dependsOn(watchos$compilation)${intention}watchosArm64$compilation.dependsOn(watchos$compilation)${intention}/* watchosSimulatorArm64$compilation.dependsOn(watchos$compilation) */"
+                Target.MACOS -> "macos$compilation.dependsOn(native$compilation)${intention}macosX64$compilation.dependsOn(macos$compilation)${intention}macosArm64$compilation.dependsOn(macos$compilation)"
+                Target.IOS -> "ios$compilation.dependsOn(native$compilation)${intention}iosX64$compilation.dependsOn(ios$compilation)${intention}iosArm64$compilation.dependsOn(ios$compilation)${intention}iosSimulatorArm64$compilation.dependsOn(ios$compilation)"
+                Target.TV_OS -> "tvos$compilation.dependsOn(native$compilation)${intention}tvosX64$compilation.dependsOn(tvos$compilation)${intention}tvosArm64$compilation.dependsOn(tvos$compilation)${intention}tvosSimulatorArm64$compilation.dependsOn(tvos$compilation)"
+                Target.WATCH_OS -> "watchos$compilation.dependsOn(native$compilation)${intention}watchosX64$compilation.dependsOn(watchos$compilation)${intention}watchosArm64$compilation.dependsOn(watchos$compilation)${intention}watchosSimulatorArm64$compilation.dependsOn(watchos$compilation)"
                 Target.WINDOWS -> "windows$compilation.dependsOn(native$compilation)${intention}mingwX64$compilation.dependsOn(windows$compilation)"
             }
         }
