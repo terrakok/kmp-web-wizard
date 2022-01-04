@@ -1,7 +1,6 @@
 package org.jetbrains.webwiz.style
 
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.selectors.hover
 
 object WtTexts : StyleSheet(AppStylesheet) {
 

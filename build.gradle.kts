@@ -2,8 +2,8 @@ import org.jetbrains.compose.compose
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 
 plugins {
-    kotlin("multiplatform") version "1.5.31"
-    id("org.jetbrains.compose") version "1.0.0-beta5"
+    kotlin("multiplatform") version "1.6.10"
+    id("org.jetbrains.compose") version "1.0.1"
 }
 
 repositories {
@@ -42,13 +42,5 @@ kotlin {
                 implementation(npm("stream", "0.0.2"))
             }
         }
-    }
-}
-
-// a temporary workaround for a bug in jsRun invocation - see https://youtrack.jetbrains.com/issue/KT-48273
-afterEvaluate {
-    rootProject.extensions.configure<NodeJsRootExtension> {
-        versions.webpackDevServer.version = "4.0.0"
-        versions.webpackCli.version = "4.9.0"
     }
 }

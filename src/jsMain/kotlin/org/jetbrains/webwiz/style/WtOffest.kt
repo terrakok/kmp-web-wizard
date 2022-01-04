@@ -2,8 +2,6 @@ package org.jetbrains.webwiz.style
 
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.selectors.descendant
-import org.jetbrains.compose.web.css.selectors.selector
 
 object WtOffsets : StyleSheet(AppStylesheet) {
     val wtTopOffset96 by style {
