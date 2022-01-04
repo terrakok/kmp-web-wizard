@@ -1,6 +1,6 @@
 # Kotlin Multiplatform Wizard
 
-[![](https://raw.githubusercontent.com/terrakok/kmp-web-wizard/e41ac0245f9e1aabb17206b3e2eaa831559dcad2/img/image.png)](https://terrakok.github.io/kmp-web-wizard/)  
+[![](https://raw.githubusercontent.com/terrakok/kmp-web-wizard/master/img/img.png)](https://terrakok.github.io/kmp-web-wizard/)  
 
 This is JB hackathon project.
 Try it out [here](https://terrakok.github.io/kmp-web-wizard/)
