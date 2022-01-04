@@ -13,6 +13,7 @@ import org.jetbrains.webwiz.generator.generate
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.KotlinVersion
 import org.jetbrains.webwiz.models.ProjectInfo
+import org.jetbrains.webwiz.models.SingleTargetLibrary
 import org.jetbrains.webwiz.models.Target
 import org.jetbrains.webwiz.setHighlightedCode
 import org.jetbrains.webwiz.style.WtContainer
@@ -27,9 +28,9 @@ private val defaultProject = ProjectInfo(
     packageName = "org.sample.application",
     kotlinVersion = KotlinVersion.Stable,
     targets = setOf(Target.ANDROID, Target.IOS),
-    enableTests = false,
-    dependencies = setOf(KmpLibrary.SERIALIZATION),
-    singleTargetDependencies = emptySet(),
+    enableTests = true,
+    dependencies = setOf(KmpLibrary.COROUTINES, KmpLibrary.KERMIT_LOGGER, KmpLibrary.KTOR_CORE),
+    singleTargetDependencies = setOf(SingleTargetLibrary.KTOR_CLIENT_IOS, SingleTargetLibrary.KTOR_CLIENT_ANDROID),
     nativeTargetLibraries = emptySet(),
     gradlePlugins = emptySet()
 ).normalize()

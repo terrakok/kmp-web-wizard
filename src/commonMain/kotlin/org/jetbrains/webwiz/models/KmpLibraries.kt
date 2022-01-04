@@ -68,9 +68,9 @@ enum class SingleTargetLibrary(
         "io.ktor:ktor-client-ios:$KtorVersion",
         MAIN
     ),
-    KTOR_CLIENT_OKHTTP(
+    KTOR_CLIENT_ANDROID(
         ANDROID,
-        "Ktor OkHttp Client",
+        "Ktor Android Client",
         "io.ktor:ktor-client-okhttp:$KtorVersion",
         MAIN
     ),
