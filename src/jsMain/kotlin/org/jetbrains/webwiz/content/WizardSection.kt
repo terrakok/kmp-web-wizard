@@ -1,10 +1,10 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package org.jetbrains.webwiz.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import org.jetbrains.compose.common.foundation.layout.Row
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -35,10 +35,7 @@ private val defaultProject = ProjectInfo(
     gradlePlugins = emptySet()
 ).normalize()
 
-internal val projectInfoState = mutableStateOf(defaultProject)
-
 @Composable
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
     classes(WtSections.wtSection)
 }) {
@@ -48,112 +45,88 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
         Div({
             classes(WtTexts.wtText1)
         }) {
-            Row {
-                Div({ classes(WtOffsets.rowItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Project name")
+            val projectInfoState = remember { mutableStateOf(defaultProject) }
+            Div({ classes(WtOffsets.rowItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Project name")
+                }
+
+                TextInput(projectInfoState.value.projectName) {
+
+                    onInput { event ->
+                        projectInfoState.value = projectInfoState.value.copy(projectName = event.value)
                     }
 
-                    TextInput(projectInfoState.value.projectName) {
+                    classes(WtOffsets.textInputStyle)
+                }
+            }
+            Div({ classes(WtOffsets.rowItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Module name")
+                }
 
-                        onInput { event ->
-                            projectInfoState.value = projectInfoState.value.copy(projectName = event.value)
-                        }
+                TextInput(projectInfoState.value.moduleName) {
 
-                        classes(WtOffsets.textInputStyle)
+                    onInput { event ->
+                        projectInfoState.value = projectInfoState.value.copy(moduleName = event.value)
+                    }
+
+                    classes(WtOffsets.textInputStyle)
+                }
+            }
+            Div({ classes(WtOffsets.rowItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Package")
+                }
+                TextInput(projectInfoState.value.packageName) {
+                    onInput { event ->
+                        projectInfoState.value = projectInfoState.value.copy(packageName = event.value)
+                    }
+                    classes(WtOffsets.textInputStyle)
+                }
+            }
+            Div({ classes(WtOffsets.rowItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Kotlin version")
+                }
+
+                Div {
+                    KotlinVersionSwitcher(projectInfoState.value.kotlinVersion) {
+                        projectInfoState.value = projectInfoState.value.copy(kotlinVersion = it)
                     }
                 }
             }
-            Row {
-                Div({ classes(WtOffsets.rowItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Module name")
-                    }
-
-                    TextInput(projectInfoState.value.moduleName) {
-
-                        onInput { event ->
-                            projectInfoState.value = projectInfoState.value.copy(moduleName = event.value)
-                        }
-
-                        classes(WtOffsets.textInputStyle)
-                    }
+            Div({ classes(WtOffsets.rowTargetsItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Targets")
                 }
+                TargetChips(projectInfoState.value) { projectInfoState.value = it }
             }
-            Row {
-                Div({ classes(WtOffsets.rowItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Package")
-                    }
-                    TextInput(projectInfoState.value.packageName) {
-                        onInput { event ->
-                            projectInfoState.value = projectInfoState.value.copy(packageName = event.value)
-                        }
-                        classes(WtOffsets.textInputStyle)
-                    }
+            Div({ classes(WtOffsets.rowTargetsItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Libraries")
                 }
+                LibrariesChips(projectInfoState.value) { projectInfoState.value = it }
             }
-            Row {
-                Div({ classes(WtOffsets.rowItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Kotlin version")
-                    }
-
-                    Div {
-                        KotlinVersionSwitcher(projectInfoState.value.kotlinVersion) {
-                            projectInfoState.value = projectInfoState.value.copy(kotlinVersion = it)
-                        }
-                    }
+            Div({ classes(WtOffsets.rowTargetsItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Single Target Libraries")
                 }
+                SingleTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
             }
-            Row {
-                Div({ classes(WtOffsets.rowItems) }) {
-                    Div({ classes(WtOffsets.rowTargetsItems) }) {
-                        Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                            Text("Targets")
-                        }
-                        TargetChips()
-                    }
+            Div({ classes(WtOffsets.rowTargetsItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Native Target Libraries")
                 }
+                NativeTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
             }
-
-            Row {
-                Div({ classes(WtOffsets.rowTargetsItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Libraries")
-                    }
-                    LibrariesChips()
+            Div({ classes(WtOffsets.rowTargetsItems) }) {
+                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                    Text("Plugins")
                 }
+                PluginsChips(projectInfoState.value) { projectInfoState.value = it }
             }
-
-            Row {
-                Div({ classes(WtOffsets.rowTargetsItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Single Target Libraries")
-                    }
-                    SingleTargetLibraryChips()
-                }
-            }
-
-            Row {
-                Div({ classes(WtOffsets.rowTargetsItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Native Target Libraries")
-                    }
-                    NativeTargetLibraryChips()
-                }
-            }
-
-            Row {
-                Div({ classes(WtOffsets.rowTargetsItems) }) {
-                    Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                        Text("Plugins")
-                    }
-                    PluginsChips()
-                }
-            }
-
-            Row {
+            Div({ classes(WtOffsets.rowItems) }) {
                 Span({ classes(WtOffsets.textInputLabelsStyle) }) {
                     Text("Include tests")
                 }

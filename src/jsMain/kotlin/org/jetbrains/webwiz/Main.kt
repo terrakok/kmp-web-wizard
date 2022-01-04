@@ -1,6 +1,4 @@
 import kotlinx.browser.window
-import org.jetbrains.compose.common.foundation.layout.Box
-import org.jetbrains.compose.common.ui.ExperimentalComposeWebWidgetsApi
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.renderComposable
 import org.jetbrains.webwiz.FileSaverJs
@@ -18,20 +16,16 @@ import org.jetbrains.webwiz.models.ProjectInfo
 import org.jetbrains.webwiz.style.AppStylesheet
 import org.w3c.files.Blob
 
-@OptIn(ExperimentalComposeWebWidgetsApi::class)
 fun main() {
     renderComposable(rootElementId = "root") {
-        Box {
-            Style(AppStylesheet)
-
-            Layout {
-                Header()
-                MainContentLayout {
-                    Intro()
-                    WizardSection { generateProject(it) }
-                }
-                PageFooter()
+        Style(AppStylesheet)
+        Layout {
+            Header()
+            MainContentLayout {
+                Intro()
+                WizardSection { generateProject(it) }
             }
+            PageFooter()
         }
     }
 }
@@ -44,8 +38,8 @@ private fun generateProject(project: ProjectInfo) {
             project.generate().forEach { file ->
                 when (file) {
                     is GradleWrapperJar -> zip.file(
-                            file.path,
-                            gradleWrapperBlob
+                        file.path,
+                        gradleWrapperBlob
                     )
                     is Gradlew -> zip.file(
                         file.path,

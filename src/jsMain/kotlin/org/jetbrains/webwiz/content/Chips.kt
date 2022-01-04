@@ -10,26 +10,25 @@ import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.NativeTargetLibrary
+import org.jetbrains.webwiz.models.ProjectInfo
 import org.jetbrains.webwiz.models.SingleTargetLibrary
 import org.jetbrains.webwiz.models.Target
 import org.jetbrains.webwiz.models.isCommonNativeTargetPresent
-import org.jetbrains.webwiz.models.isNativeTargetPresent
 import org.jetbrains.webwiz.style.WtOffsets
 
 @Composable
-fun TargetChips() {
+fun TargetChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         Target.values().forEach { t ->
             Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfoState.value.targets.contains(t)) {
+                CheckboxInput(projectInfo.targets.contains(t)) {
                     onChange { event ->
-                        val current = projectInfoState.value.targets.toMutableSet()
                         val new: Set<Target> = when {
-                            event.value -> current.plus(t)
-                            current.size > 1 -> current.minus(t)
-                            else -> current
+                            event.value -> projectInfo.targets.plus(t)
+                            projectInfo.targets.size > 1 -> projectInfo.targets.minus(t)
+                            else -> projectInfo.targets
                         }
-                        applyTargetsUpdate(targets = new)
+                        update(projectInfo.applyNewTargets(new))
                     }
                     id("checkbox_${t.name}")
                 }
@@ -41,25 +40,49 @@ fun TargetChips() {
     }
 }
 
+private fun ProjectInfo.applyNewTargets(targets: Set<Target>): ProjectInfo {
+    val currentLibraries = dependencies.toMutableSet()
+    val currentPlugins = gradlePlugins.toMutableSet()
+
+    for (library in KmpLibrary.values()) {
+        if (library.targets != null && targets.any { it !in library.targets }) {
+            currentLibraries.remove(library)
+        }
+    }
+
+    for (plugin in GradlePlugin.values()) {
+        if (targets.containsAll(plugin.mandatory) && !targets.any { it in plugin.forbidden })
+            continue
+        if (plugin.mandatory.isNotEmpty() && targets.any { !plugin.mandatory.contains(it) }) {
+            currentPlugins.remove(plugin)
+        }
+    }
+
+    return copy(
+        targets = targets,
+        dependencies = currentLibraries,
+        gradlePlugins = currentPlugins
+    )
+}
+
 
 @Composable
-fun LibrariesChips() {
+fun LibrariesChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         KmpLibrary.values().forEach { t ->
 
-            if (t.targets != null && projectInfoState.value.targets.any { it !in t.targets }) {
+            if (t.targets != null && projectInfo.targets.any { it !in t.targets }) {
                 return@forEach DisabledChip(t.userName)
             }
 
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfoState.value.dependencies.contains(t)) {
+                CheckboxInput(projectInfo.dependencies.contains(t)) {
                     onChange { event ->
-                        val current = projectInfoState.value.dependencies.toMutableSet()
                         val new: Set<KmpLibrary> = when {
-                            event.value -> current.plus(t)
-                            else -> current.minus(t)
+                            event.value -> projectInfo.dependencies.plus(t)
+                            else -> projectInfo.dependencies.minus(t)
                         }
-                        projectInfoState.value = projectInfoState.value.copy(dependencies = new)
+                        update(projectInfo.copy(dependencies = new))
                     }
                     id("checkbox_${t.name}")
                 }
@@ -72,23 +95,22 @@ fun LibrariesChips() {
 }
 
 @Composable
-fun SingleTargetLibraryChips() {
+fun SingleTargetLibraryChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         SingleTargetLibrary.values().forEach { t ->
 
-            if (t.target !in projectInfoState.value.targets ) {
+            if (t.target !in projectInfo.targets ) {
                 return@forEach DisabledChip(t.userName)
             }
 
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfoState.value.singleTargetDependencies.contains(t)) {
+                CheckboxInput(projectInfo.singleTargetDependencies.contains(t)) {
                     onChange { event ->
-                        val current = projectInfoState.value.singleTargetDependencies.toMutableSet()
                         val new: Set<SingleTargetLibrary> = when {
-                            event.value -> current.plus(t)
-                            else -> current.minus(t)
+                            event.value -> projectInfo.singleTargetDependencies.plus(t)
+                            else -> projectInfo.singleTargetDependencies.minus(t)
                         }
-                        projectInfoState.value = projectInfoState.value.copy(singleTargetDependencies = new)
+                        update(projectInfo.copy(singleTargetDependencies = new))
                     }
                     id("checkbox_${t.name}")
                 }
@@ -101,23 +123,22 @@ fun SingleTargetLibraryChips() {
 }
 
 @Composable
-fun NativeTargetLibraryChips() {
+fun NativeTargetLibraryChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         NativeTargetLibrary.values().forEach { t ->
 
-            if (!projectInfoState.value.targets.isCommonNativeTargetPresent() ) {
+            if (!projectInfo.targets.isCommonNativeTargetPresent() ) {
                 return@forEach DisabledChip(t.userName)
             }
 
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfoState.value.nativeTargetLibraries.contains(t)) {
+                CheckboxInput(projectInfo.nativeTargetLibraries.contains(t)) {
                     onChange { event ->
-                        val current = projectInfoState.value.nativeTargetLibraries.toMutableSet()
                         val new: Set<NativeTargetLibrary> = when {
-                            event.value -> current.plus(t)
-                            else -> current.minus(t)
+                            event.value -> projectInfo.nativeTargetLibraries.plus(t)
+                            else -> projectInfo.nativeTargetLibraries.minus(t)
                         }
-                        projectInfoState.value = projectInfoState.value.copy(nativeTargetLibraries = new)
+                        update(projectInfo.copy(nativeTargetLibraries = new))
                     }
                     id("checkbox_${t.name}")
                 }
@@ -130,24 +151,22 @@ fun NativeTargetLibraryChips() {
 }
 
 @Composable
-fun PluginsChips() {
+fun PluginsChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         GradlePlugin.values().forEach { t ->
-            val targets = projectInfoState.value.targets
-
-            if (t.mandatory.any { !targets.contains(it) } || t.forbidden.any { targets.contains(it) }) {
+            if (t.mandatory.any { !projectInfo.targets.contains(it) } ||
+                t.forbidden.any { projectInfo.targets.contains(it) }) {
                 return@forEach DisabledChip(t.userName)
             }
 
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfoState.value.gradlePlugins.contains(t)) {
+                CheckboxInput(projectInfo.gradlePlugins.contains(t)) {
                     onChange { event ->
-                        val current = projectInfoState.value.gradlePlugins.toMutableSet()
                         val new: Set<GradlePlugin> = when {
-                            event.value -> current.plus(t)
-                            else -> current.minus(t)
+                            event.value -> projectInfo.gradlePlugins.plus(t)
+                            else -> projectInfo.gradlePlugins.minus(t)
                         }
-                        projectInfoState.value = projectInfoState.value.copy(gradlePlugins = new)
+                        update(projectInfo.copy(gradlePlugins = new))
                     }
                     id("checkbox_gradle_plugin_${t.name}")
                 }
@@ -171,29 +190,4 @@ fun DisabledChip(label: String) {
             Text(label)
         }
     }
-}
-
-private fun applyTargetsUpdate(targets: Set<Target>) {
-    val currentLibraries = projectInfoState.value.dependencies.toMutableSet()
-    val currentPlugins = projectInfoState.value.gradlePlugins.toMutableSet()
-
-    for (library in KmpLibrary.values()) {
-        if (library.targets != null && targets.any { it !in library.targets }) {
-            currentLibraries.remove(library)
-        }
-    }
-
-    for (plugin in GradlePlugin.values()) {
-        if (targets.containsAll(plugin.mandatory) && !targets.any { it in plugin.forbidden })
-            continue
-        if (plugin.mandatory.isNotEmpty() && targets.any { !plugin.mandatory.contains(it) }) {
-            currentPlugins.remove(plugin)
-        }
-    }
-
-    projectInfoState.value = projectInfoState.value.copy(
-        targets = targets,
-        dependencies = currentLibraries,
-        gradlePlugins = currentPlugins
-    )
 }
