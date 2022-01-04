@@ -1,7 +1,6 @@
 package org.jetbrains.webwiz.content
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import org.jetbrains.compose.common.foundation.layout.Row
@@ -10,7 +9,6 @@ import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.webwiz.generator.ProjectFile
-import org.jetbrains.webwiz.generator.files.RootBuildGradle
 import org.jetbrains.webwiz.generator.generate
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.KotlinVersion
@@ -193,10 +191,16 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
                     minHeight(600.pt)
                 }
             }) {
-                val structure = projectInfoState.value.generate()
-                val selectedFile = remember(projectInfoState.value) { mutableStateOf(structure.first { it is RootBuildGradle }) }
+                val selectedFilePath = remember { mutableStateOf("build.gradle.kts") }
 
-                filesStructure(structure, selectedFile)
+                val structure = projectInfoState.value.generate()
+                if (structure.none { it.path == selectedFilePath.value }) {
+                    selectedFilePath.value = "build.gradle.kts"
+                }
+
+                filesStructure(structure, selectedFilePath.value) {
+                    selectedFilePath.value = it.path
+                }
                 Span(attrs = {
                     style {
                         width(1.pt)
@@ -205,11 +209,11 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
                         marginRight(5.px)
                     }
                 })
-                selectedFile.value.let { f ->
+                selectedFilePath.value.let { path ->
                     val lang = when {
-                        f.path.endsWith(".kt") -> "kotlin"
-                        f.path.endsWith(".kts") -> "gradle"
-                        f.path.endsWith(".xml") -> "xml"
+                        path.endsWith(".kt") -> "kotlin"
+                        path.endsWith(".kts") -> "gradle"
+                        path.endsWith(".xml") -> "xml"
                         else -> "text"
                     }
                     Pre(attrs = {
@@ -224,8 +228,9 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
                                 backgroundColor(Color("transparent"))
                             }
                         }) {
-                            DomSideEffect(f.content) {
-                                it.setHighlightedCode(f.content)
+                            val content = structure.first { it.path == path }.content
+                            DomSideEffect(content) {
+                                it.setHighlightedCode(content)
                             }
                         }
                     }
@@ -236,7 +241,11 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
 }
 
 @Composable
-private fun filesStructure(list: List<ProjectFile>, selectedFile: MutableState<ProjectFile>) {
+private fun filesStructure(
+    list: List<ProjectFile>,
+    selectedFilePath: String,
+    onClick: (file: ProjectFile) -> Unit
+) {
     fun putFileToDir(f: ProjectFile, path: List<String>, dir: MutableMap<String, Any?>): MutableMap<String, Any?> {
         if (path.size == 1) {
             dir[path.first()] = f
@@ -249,11 +258,16 @@ private fun filesStructure(list: List<ProjectFile>, selectedFile: MutableState<P
 
     val root = mutableMapOf<String, Any?>()
     list.forEach { f -> putFileToDir(f, f.path.split('/'), root) }
-    fileTree(0, root, selectedFile)
+    fileTree(0, root, selectedFilePath, onClick)
 }
 
 @Composable
-private fun fileTree(level: Int, map: Map<String, Any?>, selectedFile: MutableState<ProjectFile>) {
+private fun fileTree(
+    level: Int,
+    map: Map<String, Any?>,
+    selectedFilePath: String,
+    onClick: (file: ProjectFile) -> Unit
+) {
     Ul(attrs = {
         if (level == 0) {
             classes("filetree")
@@ -273,12 +287,12 @@ private fun fileTree(level: Int, map: Map<String, Any?>, selectedFile: MutableSt
             if (content == null) {
                 val f = fileEntry.value as ProjectFile
                 Li(attrs = {
-                    onClick { selectedFile.value = f }
+                    onClick { onClick(f) }
                     style {
                         cursor("pointer")
                     }
                 }) {
-                    if (selectedFile.value.path == f.path) B { Text(name) }
+                    if (selectedFilePath == f.path) B { Text(name) }
                     else Text(name)
                 }
             } else {
@@ -290,7 +304,7 @@ private fun fileTree(level: Int, map: Map<String, Any?>, selectedFile: MutableSt
                             cursor("pointer")
                         }
                     }) { Text(name) }
-                    fileTree(level + 1, content, selectedFile)
+                    fileTree(level + 1, content, selectedFilePath, onClick)
                 }
             }
         }
