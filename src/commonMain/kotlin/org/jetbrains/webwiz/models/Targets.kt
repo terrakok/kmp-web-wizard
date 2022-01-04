@@ -10,12 +10,10 @@ enum class Target(val targetName: String, val userName: String) {
     LINUX("linux", "Linux"),
     MACOS("macos", "macOS"),
     WINDOWS("windows", "Windows"),
-    WASM("wasm", "WASM"),
     ANDROID_NATIVE("androidNative", "Android Native")
 }
 
 private val NativeTargets = setOf(
-    Target.WASM,
     Target.ANDROID_NATIVE,
     Target.LINUX,
     Target.MACOS,

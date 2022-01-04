@@ -52,7 +52,6 @@ kotlin {
             Target.ANDROID -> "android()"
             Target.JVM -> if (projectInfo.gradlePlugins.contains(GradlePlugin.APPLICATION)) "jvm {\n        withJava()\n    }" else "jvm()"
             Target.JS -> "js {\n        browser()\n        nodejs()\n    }"
-            Target.WASM -> "wasm32()"
             Target.ANDROID_NATIVE -> "androidNativeArm64()"
             Target.LINUX -> "linuxX64()"
             Target.MACOS -> "macosX64()\n    /* macosArm64() sure all macos dependencies support this target */"
@@ -135,7 +134,6 @@ kotlin {
                 Target.ANDROID -> singleSourceSet(Target.ANDROID, compilation, GETTING)
                 Target.JVM -> singleSourceSet(Target.JVM, compilation, GETTING)
                 Target.JS -> singleSourceSet(Target.JS, compilation, GETTING)
-                Target.WASM -> "val wasm32$compilation by getting"
                 Target.ANDROID_NATIVE -> "val androidNativeArm64$compilation by getting"
                 Target.LINUX -> "val linuxX64$compilation by getting"
                 Target.MACOS -> "val macosX64$compilation by getting ${intention}/* val macosArm64$compilation by getting */"
@@ -153,7 +151,6 @@ kotlin {
                 Target.ANDROID -> NAN
                 Target.JVM -> NAN
                 Target.JS -> NAN
-                Target.WASM -> "val wasm$compilation by creating"
                 Target.ANDROID_NATIVE -> "val androidNative$compilation by creating"
                 Target.LINUX -> "val linux$compilation by creating"
                 Target.MACOS -> "val macos$compilation by creating"
@@ -171,7 +168,6 @@ kotlin {
                 Target.ANDROID -> "android$compilation.dependsOn(common$compilation)"
                 Target.JVM -> "jvm$compilation.dependsOn(common$compilation)"
                 Target.JS -> "js$compilation.dependsOn(common$compilation)"
-                Target.WASM -> "wasm$compilation.dependsOn(native$compilation)${intention}wasm32$compilation.dependsOn(wasm$compilation)"
                 Target.ANDROID_NATIVE -> "androidNative$compilation.dependsOn(native$compilation) ${intention}androidNativeArm64$compilation.dependsOn(androidNative$compilation)"
                 Target.LINUX -> "linux$compilation.dependsOn(native$compilation)${intention}linuxX64$compilation.dependsOn(linux$compilation)"
                 Target.MACOS -> "macos$compilation.dependsOn(native$compilation)${intention}macosX64$compilation.dependsOn(macos$compilation)${intention}/* macosArm64$compilation.dependsOn(macos$compilation) */"

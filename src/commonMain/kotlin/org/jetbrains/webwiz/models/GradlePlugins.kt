@@ -17,7 +17,7 @@ enum class GradlePlugin(
     ),
     SQL_DELIGHT(
         emptySet(),
-        setOf(Target.WASM),
+        emptySet(),
         "SQLDelight"
     );
 
