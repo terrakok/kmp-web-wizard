@@ -246,7 +246,6 @@ private fun fileTree(
         if (level == 0) {
             classes("filetree")
             style {
-                width(200.pt)
                 paddingLeft(0.px)
             }
         } else {
@@ -266,14 +265,19 @@ private fun fileTree(
                         cursor("pointer")
                     }
                 }) {
-                    if (selectedFilePath == f.path) B { Text(name) }
-                    else Text(name)
+                    if (selectedFilePath == f.path) {
+                        B(attrs = {
+                            style {
+                                color(Color.black)
+                            }
+                        }) { Text(name) }
+                    } else Text(name)
                 }
             } else {
                 var flattenName = name
                 var dir: Map<String, Any?> = content
                 while (dir.entries.size == 1 && dir.entries.first().value is Map<*, *>) {
-                    flattenName += "." + dir.entries.first().key
+                    flattenName += "/" + dir.entries.first().key
                     dir = dir.entries.first().value as Map<String, Any?>
                 }
 
@@ -283,7 +287,6 @@ private fun fileTree(
                     Label(forId = id, attrs = {
                         style {
                             cursor("pointer")
-                            title(flattenName)
                         }
                     }) { Text(flattenName) }
                     fileTree(level + 1, dir, selectedFilePath, onClick)

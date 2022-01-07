@@ -8,6 +8,7 @@
 
 .filetree ul {
     height: 0;
+    width: max-content;
     overflow: hidden;
 }
 
@@ -35,13 +36,13 @@
 
 .filetree input[type="checkbox"] + label {
     background-position: 0 0;
-    width: 33px;
+    width: max-content;
     height: 33px;
 }
 
 .filetree input[type="checkbox"]:checked + label {
     background-position: 0 -33px;
-    width: 30px;
+    width: max-content;
     height: 30px;
 }
 
