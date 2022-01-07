@@ -270,15 +270,23 @@ private fun fileTree(
                     else Text(name)
                 }
             } else {
+                var flattenName = name
+                var dir: Map<String, Any?> = content
+                while (dir.entries.size == 1 && dir.entries.first().value is Map<*, *>) {
+                    flattenName += "." + dir.entries.first().key
+                    dir = dir.entries.first().value as Map<String, Any?>
+                }
+
                 Li {
-                    val id = "level-$level-$name-${Random.nextFloat()}"
+                    val id = "level-$level-$flattenName-${Random.nextFloat()}"
                     Input(InputType.Checkbox) { id(id) }
                     Label(forId = id, attrs = {
                         style {
                             cursor("pointer")
+                            title(flattenName)
                         }
-                    }) { Text(name) }
-                    fileTree(level + 1, content, selectedFilePath, onClick)
+                    }) { Text(flattenName) }
+                    fileTree(level + 1, dir, selectedFilePath, onClick)
                 }
             }
         }
