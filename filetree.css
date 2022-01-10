@@ -6,10 +6,15 @@
     display: none;
 }
 
+.filetree {
+    padding-left: 10px;
+}
+
 .filetree ul {
     height: 0;
     width: max-content;
     overflow: hidden;
+    padding-left: 10px;
 }
 
 .filetree > li input:checked ~ ul {
@@ -18,6 +23,7 @@
 
 .filetree li {
     list-style: none;
+    line-height: 33px;
 }
 
 .filetree label {

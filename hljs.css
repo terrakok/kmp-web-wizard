@@ -7,9 +7,7 @@
 .hljs {
     display: block;
     overflow-x: auto;
-    padding: .5em;
     color: #2f3337;
-    background: #f6f6f6
 }
 
 .hljs-comment {
@@ -55,4 +53,12 @@
 
 .hljs-strong {
     font-weight: 700
+}
+
+/* Technique to disable line numbers from being selected and copied.
+   Checkout this post for more details http://codepen.io/danoc/pen/ByGKZv */
+[data-pseudo-content]::before,
+[data-pseudo-content--before]::before,
+[data-pseudo-content--after]::after {
+    content: attr(data-pseudo-content);
 }
