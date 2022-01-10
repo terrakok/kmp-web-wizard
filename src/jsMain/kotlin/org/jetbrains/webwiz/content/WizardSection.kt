@@ -42,171 +42,170 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
     Div({
         classes(WtContainer.wtContainer)
     }) {
-        Div({
-            classes(WtTexts.wtText1)
-        }) {
-            val projectInfoState = remember { mutableStateOf(defaultProject) }
-            Div({ classes(WtOffsets.rowItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Project name")
+        val projectInfoState = remember { mutableStateOf(defaultProject) }
+        Div({ classes(WtOffsets.rowItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Project name")
+            }
+
+            TextInput(projectInfoState.value.projectName) {
+
+                onInput { event ->
+                    projectInfoState.value = projectInfoState.value.copy(projectName = event.value)
                 }
 
-                TextInput(projectInfoState.value.projectName) {
-
-                    onInput { event ->
-                        projectInfoState.value = projectInfoState.value.copy(projectName = event.value)
-                    }
-
-                    classes(WtOffsets.textInputStyle)
-                }
+                classes(WtOffsets.textInputStyle)
             }
-            Div({ classes(WtOffsets.rowItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Module name")
-                }
-
-                TextInput(projectInfoState.value.moduleName) {
-
-                    onInput { event ->
-                        projectInfoState.value = projectInfoState.value.copy(moduleName = event.value)
-                    }
-
-                    classes(WtOffsets.textInputStyle)
-                }
+        }
+        Div({ classes(WtOffsets.rowItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Module name")
             }
-            Div({ classes(WtOffsets.rowItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Package")
-                }
-                TextInput(projectInfoState.value.packageName) {
-                    onInput { event ->
-                        projectInfoState.value = projectInfoState.value.copy(packageName = event.value)
-                    }
-                    classes(WtOffsets.textInputStyle)
-                }
-            }
-            Div({ classes(WtOffsets.rowItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Kotlin version")
+
+            TextInput(projectInfoState.value.moduleName) {
+
+                onInput { event ->
+                    projectInfoState.value = projectInfoState.value.copy(moduleName = event.value)
                 }
 
-                Div {
-                    KotlinVersionSwitcher(projectInfoState.value.kotlinVersion) {
-                        projectInfoState.value = projectInfoState.value.copy(kotlinVersion = it)
-                    }
+                classes(WtOffsets.textInputStyle)
+            }
+        }
+        Div({ classes(WtOffsets.rowItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Package")
+            }
+            TextInput(projectInfoState.value.packageName) {
+                onInput { event ->
+                    projectInfoState.value = projectInfoState.value.copy(packageName = event.value)
+                }
+                classes(WtOffsets.textInputStyle)
+            }
+        }
+        Div({ classes(WtOffsets.rowItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Kotlin version")
+            }
+
+            Div {
+                KotlinVersionSwitcher(projectInfoState.value.kotlinVersion) {
+                    projectInfoState.value = projectInfoState.value.copy(kotlinVersion = it)
                 }
             }
-            Div({ classes(WtOffsets.rowTargetsItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Targets")
-                }
-                TargetChips(projectInfoState.value) { projectInfoState.value = it }
+        }
+        Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Targets")
             }
-            Div({ classes(WtOffsets.rowTargetsItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Libraries")
-                }
-                LibrariesChips(projectInfoState.value) { projectInfoState.value = it }
+            TargetChips(projectInfoState.value) { projectInfoState.value = it }
+        }
+        Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Libraries")
             }
-            Div({ classes(WtOffsets.rowTargetsItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Single Target Libraries")
-                }
-                SingleTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
+            LibrariesChips(projectInfoState.value) { projectInfoState.value = it }
+        }
+        Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Single Target Libraries")
             }
-            Div({ classes(WtOffsets.rowTargetsItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Native Target Libraries")
-                }
-                NativeTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
+            SingleTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
+        }
+        Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Native Target Libraries")
             }
-            Div({ classes(WtOffsets.rowTargetsItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Plugins")
-                }
-                PluginsChips(projectInfoState.value) { projectInfoState.value = it }
+            NativeTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
+        }
+        Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Plugins")
             }
-            Div({ classes(WtOffsets.rowItems) }) {
-                Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                    Text("Include tests")
-                }
-                Span({ classes(WtOffsets.testsCheckboxStyle) }) {
-                    CheckboxInput(projectInfoState.value.enableTests) {
-                        onChange {
-                            projectInfoState.value =
-                                projectInfoState.value.copy(enableTests = !projectInfoState.value.enableTests)
-                        }
+            PluginsChips(projectInfoState.value) { projectInfoState.value = it }
+        }
+        Div({ classes(WtOffsets.rowItems, WtTexts.wtText1) }) {
+            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
+                Text("Include tests")
+            }
+            Span({ classes(WtOffsets.testsCheckboxStyle) }) {
+                CheckboxInput(projectInfoState.value.enableTests) {
+                    onChange {
+                        projectInfoState.value =
+                            projectInfoState.value.copy(enableTests = !projectInfoState.value.enableTests)
                     }
                 }
             }
+        }
 
-            Div({ classes(WtOffsets.generateButtonStyle) }) {
-                Button(attrs = {
-                    classes(WtTexts.wtButton, WtTexts.wtButtonContrast, WtOffsets.wtTopOffset24)
-                    onClick { callback(projectInfoState.value) }
-                    style {
-                        cursor("pointer")
-                    }
-                }) {
-                    Text("Download new project")
-                }
-            }
-
-            Div({
-                classes(WtOffsets.wtTopOffset24)
+        Div({ classes(WtOffsets.generateButtonStyle, WtTexts.wtText1) }) {
+            Button(attrs = {
+                classes(WtTexts.wtButton, WtTexts.wtButtonContrast, WtOffsets.wtTopOffset24)
+                onClick { callback(projectInfoState.value) }
                 style {
-                    backgroundColor(rgba(39, 40, 44, 0.05))
-                    borderRadius(8.px, 8.px, 8.px)
-                    padding(12.px, 16.px)
-                    property("font-family", "'JetBrains Mono', monospace")
-                    fontSize(10.pt)
-                    display(DisplayStyle.Flex)
-                    flexDirection(FlexDirection.Row)
-                    minHeight(600.pt)
+                    cursor("pointer")
                 }
             }) {
-                val selectedFilePath = remember { mutableStateOf("build.gradle.kts") }
+                Text("Download new project")
+            }
+        }
 
-                val structure = projectInfoState.value.generate()
-                if (structure.none { it.path == selectedFilePath.value }) {
-                    selectedFilePath.value = "build.gradle.kts"
+        Div({
+            classes(WtOffsets.wtTopOffset24)
+            style {
+                backgroundColor(rgba(39, 40, 44, 0.05))
+                borderRadius(8.px, 8.px, 8.px)
+                property("font-family", "'JetBrains Mono', monospace")
+                fontSize(10.pt)
+                display(DisplayStyle.Flex)
+                flexDirection(FlexDirection.Row)
+                minHeight(600.pt)
+            }
+        }) {
+            val selectedFilePath = remember { mutableStateOf("build.gradle.kts") }
+
+            val structure = projectInfoState.value.generate()
+            if (structure.none { it.path == selectedFilePath.value }) {
+                selectedFilePath.value = "build.gradle.kts"
+            }
+
+            Div(attrs = {
+                style {
+                    color(rgba(39, 40, 44, .7))
+                    marginTop(5.px)
+                    marginBottom(5.px)
                 }
-
+            }) {
                 filesStructure(structure, selectedFilePath.value) {
                     selectedFilePath.value = it.path
                 }
-                Span(attrs = {
-                    style {
-                        width(1.pt)
-                        backgroundColor(Color("gray"))
-                        marginLeft(5.px)
-                        marginRight(5.px)
-                    }
-                })
-                selectedFilePath.value.let { path ->
+            }
+            Span(attrs = {
+                style {
+                    width(1.pt)
+                    backgroundColor(Color("gray"))
+                    marginLeft(5.px)
+                    marginRight(5.px)
+                }
+            })
+            Pre(attrs = {
+                style {
+                    color(rgba(39, 40, 44, .7))
+                    lineHeight(29.px)
+                    marginTop(5.px)
+                    marginBottom(5.px)
+                }
+            }) {
+                Code {
+                    val path = selectedFilePath.value
                     val lang = when {
                         path.endsWith(".kt") -> "kotlin"
                         path.endsWith(".kts") -> "gradle"
                         path.endsWith(".xml") -> "xml"
                         else -> "text"
                     }
-                    Pre(attrs = {
-                        style {
-                            overflow("auto")
-                        }
-                    }) {
-                        Code({
-                            classes("language-$lang", "hljs")
-                            style {
-                                property("tab-size", 4)
-                                backgroundColor(Color("transparent"))
-                            }
-                        }) {
-                            val content = structure.first { it.path == path }.content
-                            DomSideEffect(content) {
-                                it.setHighlightedCode(content)
-                            }
-                        }
+                    val content = structure.first { it.path == path }.content
+                    DomSideEffect(content) {
+                        it.setHighlightedCode(content, lang)
                     }
                 }
             }
@@ -243,16 +242,7 @@ private fun fileTree(
     onClick: (file: ProjectFile) -> Unit
 ) {
     Ul(attrs = {
-        if (level == 0) {
-            classes("filetree")
-            style {
-                paddingLeft(0.px)
-            }
-        } else {
-            style {
-                paddingLeft(10.px)
-            }
-        }
+        if (level == 0) classes("filetree")
     }) {
         map.entries.sortedWith(FileEntryComparator).forEach { fileEntry ->
             val name = fileEntry.key
