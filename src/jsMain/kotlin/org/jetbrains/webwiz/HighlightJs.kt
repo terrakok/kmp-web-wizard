@@ -42,6 +42,6 @@ fun HTMLElement.setHighlightedCode(code: String, language: String) {
     }
     val contentTable = adaptedHighlightedContent.lines().mapIndexed { i: Int, line: String ->
         """<tr><td data-pseudo-content='$i  '></td><td>$line</td></tr>"""
-    }.joinToString("\n")
+    }.joinToString("")
     innerHTML = """<table class='code-table'>$contentTable</table>"""
 }
