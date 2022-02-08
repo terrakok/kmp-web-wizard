@@ -5,6 +5,7 @@ import org.jetbrains.webwiz.models.Target.*
 
 private const val KtorVersion = "2.0.0-beta-1"
 private const val SqlDelightVersion = "1.5.3"
+internal const val RealmVersion = "0.9.0"
 
 enum class KmpLibrary(
     val targets: Set<Target>?, //null means any target
@@ -53,6 +54,12 @@ enum class KmpLibrary(
         "Ktor Core",
         "io.ktor:ktor-client-core:$KtorVersion",
         MAIN
+    ),
+    REALM_KOTLIN(
+    setOf(JVM, ANDROID, IOS, MACOS),
+    "Realm Kotlin Multiplatform",
+    "io.realm.kotlin:library-base:$RealmVersion",
+    MAIN
     ),
 }
 

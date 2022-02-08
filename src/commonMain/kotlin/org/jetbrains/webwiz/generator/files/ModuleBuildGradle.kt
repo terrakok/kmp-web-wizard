@@ -6,6 +6,7 @@ import org.jetbrains.webwiz.generator.deleteNans
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.ProjectInfo
+import org.jetbrains.webwiz.models.RealmVersion
 import org.jetbrains.webwiz.models.SourceSetDelegate
 import org.jetbrains.webwiz.models.SourceSetDelegate.CREATING
 import org.jetbrains.webwiz.models.SourceSetDelegate.GETTING
@@ -34,6 +35,7 @@ plugins {
     ${if (GradlePlugin.APPLICATION in projectInfo.gradlePlugins) "application" else NAN}
     ${if (GradlePlugin.PUBLISH in projectInfo.gradlePlugins) "`maven-publish`" else NAN}
     ${if (GradlePlugin.SQL_DELIGHT in projectInfo.gradlePlugins) "id(\"com.squareup.sqldelight\")" else NAN}
+    ${if (GradlePlugin.REALM in projectInfo.gradlePlugins) "id(\"io.realm.kotlin\") version \"$RealmVersion\"" else NAN}
 }
 """.trimIndent().deleteNans()
 
