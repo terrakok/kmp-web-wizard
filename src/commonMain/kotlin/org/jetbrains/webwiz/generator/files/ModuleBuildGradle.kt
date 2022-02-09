@@ -34,6 +34,7 @@ plugins {
     ${if (GradlePlugin.APPLICATION in projectInfo.gradlePlugins) "application" else NAN}
     ${if (GradlePlugin.PUBLISH in projectInfo.gradlePlugins) "`maven-publish`" else NAN}
     ${if (GradlePlugin.SQL_DELIGHT in projectInfo.gradlePlugins) "id(\"com.squareup.sqldelight\")" else NAN}
+    ${if (GradlePlugin.REALM in projectInfo.gradlePlugins) "id(\"io.realm.kotlin\")" else NAN}
 }
 """.trimIndent().deleteNans()
 

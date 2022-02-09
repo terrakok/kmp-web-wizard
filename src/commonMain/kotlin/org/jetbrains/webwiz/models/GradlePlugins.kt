@@ -19,6 +19,11 @@ enum class GradlePlugin(
         emptySet(),
         emptySet(),
         "SQLDelight"
+    ),
+    REALM(
+        emptySet(),
+        emptySet(),
+        "Realm Kotlin Multiplatform"
     );
 
     fun canBeApplied(targets: Set<Target>): Boolean =
