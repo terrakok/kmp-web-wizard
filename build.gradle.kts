@@ -32,6 +32,11 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+        val jvmMain by getting {
+            dependencies {
+                implementation("org.apache.commons:commons-compress:1.2")
+            }
+        }
         val jsMain by getting {
             dependencies {
                 implementation(compose.web.core)
@@ -43,4 +48,12 @@ kotlin {
             }
         }
     }
+}
+
+task<Copy>("fixMissingResources") {
+    dependsOn("jvmProcessResources")
+    tasks.findByPath("jvmTest")?.dependsOn(this)
+
+    from("$buildDir/processedResources/jvm/main")
+    into("$buildDir/resources/")
 }
