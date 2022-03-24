@@ -24,7 +24,7 @@ buildscript {
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${projectInfo.kotlinVersion.versionName}")
         ${if (projectInfo.dependencies.contains(KmpLibrary.SERIALIZATION)) "classpath(\"org.jetbrains.kotlin:kotlin-serialization:${projectInfo.kotlinVersion.versionName}\")" else NAN}
-        ${if (projectInfo.targets.contains(Target.ANDROID)) "classpath(\"com.android.tools.build:gradle:7.1.1\")" else NAN}
+        ${if (projectInfo.targets.contains(Target.ANDROID)) "classpath(\"com.android.tools.build:gradle:7.1.2\")" else NAN}
         ${if (GradlePlugin.SQL_DELIGHT in projectInfo.gradlePlugins) "classpath(\"com.squareup.sqldelight:gradle-plugin:1.5.3\")" else NAN}
         ${if (GradlePlugin.REALM in projectInfo.gradlePlugins) "classpath(\"io.realm.kotlin:gradle-plugin:0.9.0\")" else NAN}
     }
