@@ -53,7 +53,6 @@ kotlin {
             Target.ANDROID -> "android()"
             Target.JVM -> if (projectInfo.gradlePlugins.contains(GradlePlugin.APPLICATION)) "jvm {\n        withJava()\n    }" else "jvm()"
             Target.JS -> "js {\n        browser()\n        nodejs()\n    }"
-            Target.ANDROID_NATIVE -> "androidNativeArm64()"
             Target.LINUX -> "linuxX64()"
             Target.MACOS -> "macosX64()\n    macosArm64()"
             Target.IOS -> "iosX64()\n    iosArm64()\n    iosSimulatorArm64()"
@@ -135,7 +134,6 @@ kotlin {
                 Target.ANDROID -> singleSourceSet(Target.ANDROID, compilation, GETTING)
                 Target.JVM -> singleSourceSet(Target.JVM, compilation, GETTING)
                 Target.JS -> singleSourceSet(Target.JS, compilation, GETTING)
-                Target.ANDROID_NATIVE -> "val androidNativeArm64$compilation by getting"
                 Target.LINUX -> "val linuxX64$compilation by getting"
                 Target.MACOS -> "val macosX64$compilation by getting ${intention}val macosArm64$compilation by getting"
                 Target.IOS -> "val iosX64$compilation by getting ${intention}val iosArm64$compilation by getting${intention}val iosSimulatorArm64$compilation by getting"
@@ -152,7 +150,6 @@ kotlin {
                 Target.ANDROID -> NAN
                 Target.JVM -> NAN
                 Target.JS -> NAN
-                Target.ANDROID_NATIVE -> "val androidNative$compilation by creating"
                 Target.LINUX -> "val linux$compilation by creating"
                 Target.MACOS -> "val macos$compilation by creating"
                 Target.IOS -> singleSourceSet(Target.IOS, compilation, CREATING)
@@ -169,7 +166,6 @@ kotlin {
                 Target.ANDROID -> "android$compilation.dependsOn(common$compilation)"
                 Target.JVM -> "jvm$compilation.dependsOn(common$compilation)"
                 Target.JS -> "js$compilation.dependsOn(common$compilation)"
-                Target.ANDROID_NATIVE -> "androidNative$compilation.dependsOn(native$compilation) ${intention}androidNativeArm64$compilation.dependsOn(androidNative$compilation)"
                 Target.LINUX -> "linux$compilation.dependsOn(native$compilation)${intention}linuxX64$compilation.dependsOn(linux$compilation)"
                 Target.MACOS -> "macos$compilation.dependsOn(native$compilation)${intention}macosX64$compilation.dependsOn(macos$compilation)${intention}macosArm64$compilation.dependsOn(macos$compilation)"
                 Target.IOS -> "ios$compilation.dependsOn(native$compilation)${intention}iosX64$compilation.dependsOn(ios$compilation)${intention}iosArm64$compilation.dependsOn(ios$compilation)${intention}iosSimulatorArm64$compilation.dependsOn(ios$compilation)"

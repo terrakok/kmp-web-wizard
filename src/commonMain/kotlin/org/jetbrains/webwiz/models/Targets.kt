@@ -9,21 +9,10 @@ enum class Target(val targetName: String, val userName: String) {
     WATCH_OS("watchos", "watchOS"),
     LINUX("linux", "Linux"),
     MACOS("macos", "macOS"),
-    WINDOWS("windows", "Windows"),
-    ANDROID_NATIVE("androidNative", "Android Native")
+    WINDOWS("windows", "Windows")
 }
 
 private val NativeTargets = setOf(
-    Target.ANDROID_NATIVE,
-    Target.LINUX,
-    Target.MACOS,
-    Target.IOS,
-    Target.TV_OS,
-    Target.WATCH_OS,
-    Target.WINDOWS
-)
-
-private val CommonNativeTargets = setOf(
     Target.LINUX,
     Target.MACOS,
     Target.IOS,
@@ -35,6 +24,4 @@ private val CommonNativeTargets = setOf(
 fun Target.isJvm() = this in setOf(Target.JVM, Target.ANDROID)
 
 fun Set<Target>.isNativeTargetPresent() = this.any { it in NativeTargets }
-fun Set<Target>.isCommonNativeTargetPresent() = this.any { it in CommonNativeTargets }
-fun Set<Target>.isAndroidTargetPresent() = this.any { it == Target.ANDROID }
-fun Set<Target>.isJvmTargetPresent() = this.any { it.isJvm() }
+fun Set<Target>.isCommonNativeTargetPresent() = this.filter { it in NativeTargets }.size > 1
