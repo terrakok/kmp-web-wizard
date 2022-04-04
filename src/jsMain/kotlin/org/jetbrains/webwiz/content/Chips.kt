@@ -9,7 +9,7 @@ import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
-import org.jetbrains.webwiz.models.NativeTargetLibrary
+import org.jetbrains.webwiz.models.CommonNativeTargetLibrary
 import org.jetbrains.webwiz.models.ProjectInfo
 import org.jetbrains.webwiz.models.SingleTargetLibrary
 import org.jetbrains.webwiz.models.Target
@@ -125,20 +125,20 @@ fun SingleTargetLibraryChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> 
 @Composable
 fun NativeTargetLibraryChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
-        NativeTargetLibrary.values().forEach { t ->
+        CommonNativeTargetLibrary.values().forEach { t ->
 
             if (!projectInfo.targets.isCommonNativeTargetPresent() ) {
                 return@forEach DisabledChip(t.userName)
             }
 
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfo.nativeTargetLibraries.contains(t)) {
+                CheckboxInput(projectInfo.commonNativeTargetLibraries.contains(t)) {
                     onChange { event ->
-                        val new: Set<NativeTargetLibrary> = when {
-                            event.value -> projectInfo.nativeTargetLibraries.plus(t)
-                            else -> projectInfo.nativeTargetLibraries.minus(t)
+                        val new: Set<CommonNativeTargetLibrary> = when {
+                            event.value -> projectInfo.commonNativeTargetLibraries.plus(t)
+                            else -> projectInfo.commonNativeTargetLibraries.minus(t)
                         }
-                        update(projectInfo.copy(nativeTargetLibraries = new))
+                        update(projectInfo.copy(commonNativeTargetLibraries = new))
                     }
                     id("checkbox_${t.name}")
                 }

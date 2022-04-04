@@ -31,7 +31,7 @@ private val defaultProject = ProjectInfo(
     enableTests = true,
     dependencies = setOf(KmpLibrary.COROUTINES, KmpLibrary.KERMIT_LOGGER, KmpLibrary.KTOR_CORE),
     singleTargetDependencies = setOf(SingleTargetLibrary.KTOR_CLIENT_IOS, SingleTargetLibrary.KTOR_CLIENT_ANDROID),
-    nativeTargetLibraries = emptySet(),
+    commonNativeTargetLibraries = emptySet(),
     gradlePlugins = emptySet()
 ).normalize()
 

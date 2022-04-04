@@ -114,7 +114,7 @@ enum class SingleTargetLibrary(
 }
 
 // Dependencies in here will be available for all native targets
-enum class NativeTargetLibrary(
+enum class CommonNativeTargetLibrary(
     val userName: String,
     val dep: String,
     val sourceSetType: SourceSetType

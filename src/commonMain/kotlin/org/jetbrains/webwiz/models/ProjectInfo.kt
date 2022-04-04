@@ -8,7 +8,7 @@ data class ProjectInfo(
     val targets: Set<Target>,
     val dependencies: Set<KmpLibrary>,
     val singleTargetDependencies: Set<SingleTargetLibrary>,
-    val nativeTargetLibraries: Set<NativeTargetLibrary>,
+    val commonNativeTargetLibraries: Set<CommonNativeTargetLibrary>,
     val gradlePlugins: Set<GradlePlugin>,
     val enableTests: Boolean
 ) {
@@ -28,12 +28,11 @@ data class ProjectInfo(
     }
 
     fun normalize() = copy(
+        targets = targets.sortedBy { it.ordinal }.toSet(),
         moduleName = moduleName.replace(' ', '_'),
         gradlePlugins = gradlePlugins.filter { it.canBeApplied(targets) }.toSet(),
-        dependencies = dependencies
-            .filter { dep -> dep.targets == null || targets.all { dep.targets.contains(it) } }.toSet(),
-        singleTargetDependencies = singleTargetDependencies
-            .filter { dep -> dep.target in targets }.toSet(),
-        nativeTargetLibraries = if (this.targets.isNativeTargetPresent()) nativeTargetLibraries else emptySet()
+        dependencies = dependencies.filter { dep -> dep.targets == null || targets.all { dep.targets.contains(it) } }.toSet(),
+        singleTargetDependencies = singleTargetDependencies.filter { dep -> dep.target in targets }.toSet(),
+        commonNativeTargetLibraries = if (targets.isCommonNativeTargetPresent()) commonNativeTargetLibraries else emptySet()
     )
 }

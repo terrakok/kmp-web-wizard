@@ -11,6 +11,7 @@ import org.jetbrains.webwiz.models.SourceSetDelegate.CREATING
 import org.jetbrains.webwiz.models.SourceSetDelegate.GETTING
 import org.jetbrains.webwiz.models.SourceSetType.MAIN
 import org.jetbrains.webwiz.models.Target
+import org.jetbrains.webwiz.models.isCommonNativeTargetPresent
 import org.jetbrains.webwiz.models.isNativeTargetPresent
 
 class ModuleBuildGradle(val projectInfo: ProjectInfo) : ProjectFile {
@@ -66,23 +67,21 @@ kotlin {
     |sourceSets {
     |        /* Main source sets */
              ${commonMainSourceSet()}
-    |        ${leafSourceSets("Main")}
-    |        ${sharedSourceSets("Main")}
-    |        ${if (projectInfo.targets.isNativeTargetPresent()) nativeSourceSets("Main") else NAN}
+    |        ${commonNativeSourceSet("Main")}
+    |        ${platformSourceSets("Main")}
+    |        ${targetSourceSets("Main")}
     |
     |        /* Main hierarchy */
-    |        ${sourceSetsDependencies("Main")}
-    |        ${if (projectInfo.targets.isNativeTargetPresent()) nativeSourceSetsDependencies("Main") else NAN}
+    |        ${sourceSetsHierarchy("Main")}
     |
     |        /* Test source sets */
              ${commonTestSourceSet()}
-    |        ${leafSourceSets("Test")}
-    |        ${sharedSourceSets("Test")}
-    |        ${if (projectInfo.targets.isNativeTargetPresent()) nativeSourceSets("Test") else NAN}
+    |        ${commonNativeSourceSet("Test")}
+    |        ${platformSourceSets("Test")}
+    |        ${targetSourceSets("Test")}
     |
     |        /* Test hierarchy */
-    |        ${sourceSetsDependencies("Test")}
-    |        ${if (projectInfo.targets.isNativeTargetPresent()) nativeSourceSetsDependencies("Test") else NAN}
+    |        ${sourceSetsHierarchy("Test")}
     |    }
 """.trimMargin().deleteNans()
 
@@ -127,7 +126,7 @@ kotlin {
            |            }
            |        }"""
 
-    private fun leafSourceSets(compilation: String): String {
+    private fun targetSourceSets(compilation: String): String {
         val intention = "\n|        "
         return projectInfo.targets.joinToString(intention) {
             when (it) {
@@ -144,60 +143,52 @@ kotlin {
         }
     }
 
-    private fun sharedSourceSets(compilation: String): String =
+    private fun platformSourceSets(compilation: String): String =
         projectInfo.targets.joinToString("\n|        ") {
             when (it) {
-                Target.ANDROID -> NAN
-                Target.JVM -> NAN
-                Target.JS -> NAN
-                Target.LINUX -> "val linux$compilation by creating"
-                Target.MACOS -> "val macos$compilation by creating"
-                Target.IOS -> singleSourceSet(Target.IOS, compilation, CREATING)
-                Target.TV_OS -> "val tvos$compilation by creating"
-                Target.WATCH_OS -> "val watchos$compilation by creating"
-                Target.WINDOWS -> "val windows$compilation by creating"
+                Target.ANDROID, Target.JVM, Target.JS -> NAN
+                Target.LINUX, Target.MACOS, Target.TV_OS, Target.WATCH_OS, Target.WINDOWS, Target.IOS ->
+                    singleSourceSet(it, compilation, CREATING)
             }
         }
 
-    private fun sourceSetsDependencies(compilation: String): String {
+    private fun sourceSetsHierarchy(compilation: String): String {
         val intention = "\n|        "
-        return projectInfo.targets.joinToString(intention) {
+
+        val commonNative = projectInfo.targets.isCommonNativeTargetPresent()
+        val nativeParent = if (commonNative) "native$compilation" else "common$compilation"
+        val nativeSourceSet = if (commonNative) "native$compilation.dependsOn(common$compilation)$intention" else ""
+
+        return nativeSourceSet + projectInfo.targets.joinToString(intention) {
             when (it) {
                 Target.ANDROID -> "android$compilation.dependsOn(common$compilation)"
                 Target.JVM -> "jvm$compilation.dependsOn(common$compilation)"
                 Target.JS -> "js$compilation.dependsOn(common$compilation)"
-                Target.LINUX -> "linux$compilation.dependsOn(native$compilation)${intention}linuxX64$compilation.dependsOn(linux$compilation)"
-                Target.MACOS -> "macos$compilation.dependsOn(native$compilation)${intention}macosX64$compilation.dependsOn(macos$compilation)${intention}macosArm64$compilation.dependsOn(macos$compilation)"
-                Target.IOS -> "ios$compilation.dependsOn(native$compilation)${intention}iosX64$compilation.dependsOn(ios$compilation)${intention}iosArm64$compilation.dependsOn(ios$compilation)${intention}iosSimulatorArm64$compilation.dependsOn(ios$compilation)"
-                Target.TV_OS -> "tvos$compilation.dependsOn(native$compilation)${intention}tvosX64$compilation.dependsOn(tvos$compilation)${intention}tvosArm64$compilation.dependsOn(tvos$compilation)${intention}tvosSimulatorArm64$compilation.dependsOn(tvos$compilation)"
-                Target.WATCH_OS -> "watchos$compilation.dependsOn(native$compilation)${intention}watchosX64$compilation.dependsOn(watchos$compilation)${intention}watchosArm64$compilation.dependsOn(watchos$compilation)${intention}watchosSimulatorArm64$compilation.dependsOn(watchos$compilation)"
-                Target.WINDOWS -> "windows$compilation.dependsOn(native$compilation)${intention}mingwX64$compilation.dependsOn(windows$compilation)"
+                Target.LINUX -> "linux$compilation.dependsOn($nativeParent)${intention}linuxX64$compilation.dependsOn(linux$compilation)"
+                Target.MACOS -> "macos$compilation.dependsOn($nativeParent)${intention}macosX64$compilation.dependsOn(macos$compilation)${intention}macosArm64$compilation.dependsOn(macos$compilation)"
+                Target.IOS -> "ios$compilation.dependsOn($nativeParent)${intention}iosX64$compilation.dependsOn(ios$compilation)${intention}iosArm64$compilation.dependsOn(ios$compilation)${intention}iosSimulatorArm64$compilation.dependsOn(ios$compilation)"
+                Target.TV_OS -> "tvos$compilation.dependsOn($nativeParent)${intention}tvosX64$compilation.dependsOn(tvos$compilation)${intention}tvosArm64$compilation.dependsOn(tvos$compilation)${intention}tvosSimulatorArm64$compilation.dependsOn(tvos$compilation)"
+                Target.WATCH_OS -> "watchos$compilation.dependsOn($nativeParent)${intention}watchosX64$compilation.dependsOn(watchos$compilation)${intention}watchosArm64$compilation.dependsOn(watchos$compilation)${intention}watchosSimulatorArm64$compilation.dependsOn(watchos$compilation)"
+                Target.WINDOWS -> "windows$compilation.dependsOn($nativeParent)${intention}mingwX64$compilation.dependsOn(windows$compilation)"
             }
         }
     }
 
-    private fun nativeUmbrellaSourceSet(
-        compilation: String,
-        sourceSetDelegate: SourceSetDelegate
-    ): String {
-        val deps = projectInfo.nativeTargetLibraries
+    private fun commonNativeSourceSet(compilation: String): String {
+        if (!projectInfo.targets.isCommonNativeTargetPresent()) return NAN
+        val deps = projectInfo.commonNativeTargetLibraries
             .filter { it.sourceSetType.sourceSetTypeName == compilation }
             .map { "implementation(\"${it.dep}\")" }
         return if (deps.isEmpty()) {
-            "val native$compilation by ${sourceSetDelegate.delegate}"
+            "val native$compilation by ${CREATING.delegate}"
         } else {
-            """val native$compilation by ${sourceSetDelegate.delegate} {
+            """val native$compilation by ${CREATING.delegate} {
                |            dependencies {
                |                ${deps.joinToString("\n|                ")}
                |            }
                |        }"""
         }
     }
-
-    private fun nativeSourceSets(compilation: String): String {
-        return nativeUmbrellaSourceSet(compilation, CREATING)
-    }
-    private fun nativeSourceSetsDependencies(compilation: String) = "native$compilation.dependsOn(common$compilation)"
 
     private fun generateAndroidPluginConfig(minSdk: String, compileSdk: String) = """
 android {

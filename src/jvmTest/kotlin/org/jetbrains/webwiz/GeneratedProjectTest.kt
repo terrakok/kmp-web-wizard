@@ -37,7 +37,7 @@ class GeneratedProjectTest {
             ProjectInfo(
                 "wizard-sample",
                 "library",
-                "my.test.lib",
+                "my.sdk.awesome",
                 KotlinVersion.Stable,
                 setOf(Target.JVM, Target.LINUX),
                 setOf(KmpLibrary.KERMIT_LOGGER, KmpLibrary.COROUTINES, KmpLibrary.DATE_TIME),
