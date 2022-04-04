@@ -17,7 +17,7 @@ fun ProjectInfo.generate(): List<ProjectFile> = mutableListOf<ProjectFile>().app
     add(Gitignore())
     add(Gradlew())
     add(GradleBat())
-    add(GradleWrapperProperties("7.4.1"))
+    add(GradleWrapperProperties("7.4.2"))
     add(GradleWrapperJar())
 
     add(RootBuildGradle(info))

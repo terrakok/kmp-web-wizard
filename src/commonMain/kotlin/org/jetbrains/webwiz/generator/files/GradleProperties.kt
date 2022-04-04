@@ -16,8 +16,6 @@ kotlin.code.style=official
 android.useAndroidX=true
 
 #MPP
-kotlin.mpp.enableGranularSourceSetsMetadata=true
-kotlin.native.enableDependencyPropagation=false
 kotlin.mpp.enableCInteropCommonization=true
     """.trimIndent()
 }
