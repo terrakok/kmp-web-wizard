@@ -22,6 +22,8 @@ private val NativeTargets = setOf(
 )
 
 fun Target.isJvm() = this in setOf(Target.JVM, Target.ANDROID)
+fun Target.isNative() = this in NativeTargets
 
-fun Set<Target>.isNativeTargetPresent() = this.any { it in NativeTargets }
-fun Set<Target>.isCommonNativeTargetPresent() = this.filter { it in NativeTargets }.size > 1
+fun Set<Target>.isNativeTargets() = this.all { it in NativeTargets }
+fun ProjectInfo.isCommonNativeTargetPresent() = targets.filter { it in NativeTargets }.size > 1
+fun ProjectInfo.isSingleNativeTargetPresent() = targets.filter { it in NativeTargets }.size == 1

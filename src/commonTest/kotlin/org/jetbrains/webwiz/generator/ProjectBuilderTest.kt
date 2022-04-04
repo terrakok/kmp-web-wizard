@@ -2,12 +2,10 @@ package org.jetbrains.webwiz.generator
 
 import org.jetbrains.webwiz.generator.files.ModuleBuildGradle
 import org.jetbrains.webwiz.generator.files.SettingsGradle
-import org.jetbrains.webwiz.models.CommonNativeTargetLibrary
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.KotlinVersion
 import org.jetbrains.webwiz.models.ProjectInfo
-import org.jetbrains.webwiz.models.SingleTargetLibrary
 import org.jetbrains.webwiz.models.Target.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -23,8 +21,6 @@ internal class ProjectBuilderTest {
             "my.sdk.package",
             KotlinVersion.Stable,
             setOf(JVM, JS, IOS, ANDROID),
-            emptySet(),
-            emptySet(),
             emptySet(),
             setOf(GradlePlugin.PUBLISH),
             true
@@ -45,14 +41,12 @@ internal class ProjectBuilderTest {
             sdk/src/androidMain/kotlin/my/sdk/package/Platform.kt
             sdk/src/jsMain/kotlin/my/sdk/package/Platform.kt
             sdk/src/iosMain/kotlin/my/sdk/package/Platform.kt
-            sdk/src/nativeMain/kotlin/my/sdk/package/Platform.kt
             sdk/src/androidMain/AndroidManifest.xml
             sdk/src/commonTest/kotlin/my/sdk/package/CommonTest.kt
             sdk/src/jvmTest/kotlin/my/sdk/package/PlatformTest.kt
             sdk/src/androidTest/kotlin/my/sdk/package/PlatformTest.kt
             sdk/src/jsTest/kotlin/my/sdk/package/PlatformTest.kt
             sdk/src/iosTest/kotlin/my/sdk/package/PlatformTest.kt
-            sdk/src/nativeTest/kotlin/my/sdk/package/NativeTest.kt
         """.trimIndent()
         assertEquals(expect, actual)
     }
@@ -65,9 +59,7 @@ internal class ProjectBuilderTest {
             "my.sdk.package",
             KotlinVersion.EAP,
             setOf(JVM, JS, IOS, ANDROID),
-            setOf(KmpLibrary.SERIALIZATION),
-            emptySet(),
-            emptySet(),
+            setOf(KmpLibrary.SERIALIZATION, KmpLibrary.SQLDELIGHT_DRIVER_NATIVE),
             setOf(GradlePlugin.PUBLISH),
             true
         )
@@ -102,10 +94,14 @@ internal class ProjectBuilderTest {
                             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                         }
                     }
-                    val iosMain by creating
                     val jvmMain by getting
                     val androidMain by getting
                     val jsMain by getting
+                    val iosMain by creating {
+                        dependencies {
+                            implementation("com.squareup.sqldelight:native-driver:1.5.3")
+                        }
+                    }
                     val iosX64Main by getting 
                     val iosArm64Main by getting
                     val iosSimulatorArm64Main by getting
@@ -125,10 +121,10 @@ internal class ProjectBuilderTest {
                             implementation(kotlin("test"))
                         }
                     }
-                    val iosTest by creating
                     val jvmTest by getting
                     val androidTest by getting
                     val jsTest by getting
+                    val iosTest by creating
                     val iosX64Test by getting 
                     val iosArm64Test by getting
                     val iosSimulatorArm64Test by getting
@@ -165,9 +161,7 @@ internal class ProjectBuilderTest {
             "my.sdk.package",
             KotlinVersion.EAP,
             setOf(JVM, IOS, LINUX, MACOS, ANDROID),
-            setOf(KmpLibrary.KERMIT_LOGGER, KmpLibrary.COROUTINES),
-            setOf(SingleTargetLibrary.KTOR_CLIENT_IOS),
-            setOf(CommonNativeTargetLibrary.SQLDELIGHT_DRIVER_NATIVE),
+            setOf(KmpLibrary.KERMIT_LOGGER, KmpLibrary.COROUTINES, KmpLibrary.KTOR_CLIENT_IOS, KmpLibrary.SQLDELIGHT_DRIVER_NATIVE),
             setOf(GradlePlugin.PUBLISH, GradlePlugin.APPLICATION),
             true
         )
@@ -206,6 +200,8 @@ internal class ProjectBuilderTest {
                             implementation("com.squareup.sqldelight:native-driver:1.5.3")
                         }
                     }
+                    val jvmMain by getting
+                    val androidMain by getting
                     val iosMain by creating {
                         dependencies {
                             implementation("io.ktor:ktor-client-ios:2.0.0-beta-1")
@@ -213,8 +209,6 @@ internal class ProjectBuilderTest {
                     }
                     val linuxMain by creating
                     val macosMain by creating
-                    val jvmMain by getting
-                    val androidMain by getting
                     val iosX64Main by getting 
                     val iosArm64Main by getting
                     val iosSimulatorArm64Main by getting
@@ -243,11 +237,11 @@ internal class ProjectBuilderTest {
                         }
                     }
                     val nativeTest by creating
+                    val jvmTest by getting
+                    val androidTest by getting
                     val iosTest by creating
                     val linuxTest by creating
                     val macosTest by creating
-                    val jvmTest by getting
-                    val androidTest by getting
                     val iosX64Test by getting 
                     val iosArm64Test by getting
                     val iosSimulatorArm64Test by getting
@@ -293,8 +287,6 @@ internal class ProjectBuilderTest {
             KotlinVersion.EAP,
             setOf(JVM, JS, IOS, ANDROID),
             setOf(KmpLibrary.SERIALIZATION),
-            emptySet(),
-            emptySet(),
             setOf(GradlePlugin.PUBLISH),
             true
         )

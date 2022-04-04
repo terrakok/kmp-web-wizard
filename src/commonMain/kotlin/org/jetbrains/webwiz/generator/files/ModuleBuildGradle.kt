@@ -3,16 +3,12 @@ package org.jetbrains.webwiz.generator.files
 import org.jetbrains.webwiz.generator.NAN
 import org.jetbrains.webwiz.generator.ProjectFile
 import org.jetbrains.webwiz.generator.deleteNans
-import org.jetbrains.webwiz.models.GradlePlugin
-import org.jetbrains.webwiz.models.KmpLibrary
-import org.jetbrains.webwiz.models.ProjectInfo
-import org.jetbrains.webwiz.models.SourceSetDelegate
+import org.jetbrains.webwiz.models.*
 import org.jetbrains.webwiz.models.SourceSetDelegate.CREATING
 import org.jetbrains.webwiz.models.SourceSetDelegate.GETTING
 import org.jetbrains.webwiz.models.SourceSetType.MAIN
-import org.jetbrains.webwiz.models.Target
-import org.jetbrains.webwiz.models.isCommonNativeTargetPresent
-import org.jetbrains.webwiz.models.isNativeTargetPresent
+import org.jetbrains.webwiz.models.SourceSetType.TEST
+import org.jetbrains.webwiz.models.Target //don't remove it!
 
 class ModuleBuildGradle(val projectInfo: ProjectInfo) : ProjectFile {
     override val path = "${projectInfo.moduleName}/build.gradle.kts"
@@ -66,33 +62,39 @@ kotlin {
     private fun setupSourceSets() = """
     |sourceSets {
     |        /* Main source sets */
-             ${commonMainSourceSet()}
-    |        ${commonNativeSourceSet("Main")}
-    |        ${platformSourceSets("Main")}
-    |        ${targetSourceSets("Main")}
+             ${commonSourceSet(MAIN)}
+    |        ${commonNativeSourceSet(MAIN)}
+    |        ${platformSourceSets(MAIN)}
+    |        ${targetSourceSets(MAIN)}
     |
     |        /* Main hierarchy */
-    |        ${sourceSetsHierarchy("Main")}
+    |        ${sourceSetsHierarchy(MAIN)}
     |
     |        /* Test source sets */
-             ${commonTestSourceSet()}
-    |        ${commonNativeSourceSet("Test")}
-    |        ${platformSourceSets("Test")}
-    |        ${targetSourceSets("Test")}
+             ${commonSourceSet(TEST)}
+    |        ${commonNativeSourceSet(TEST)}
+    |        ${platformSourceSets(TEST)}
+    |        ${targetSourceSets(TEST)}
     |
     |        /* Test hierarchy */
-    |        ${sourceSetsHierarchy("Test")}
+    |        ${sourceSetsHierarchy(TEST)}
     |    }
 """.trimMargin().deleteNans()
 
-    private fun commonMainSourceSet(): String {
-        val deps = projectInfo.dependencies.filter {
-            it.sourceSetType.sourceSetTypeName == MAIN.sourceSetTypeName
-        }.map { "implementation(\"${it.dep}\")" }
+    private fun commonSourceSet(type: SourceSetType): String {
+        val compilation = type.sourceSetTypeName
+        val deps = projectInfo.dependencies
+            .filter { it.targets.size > 1 && !it.targets.isNativeTargets() && it.sourceSetType == type }
+            .map { "implementation(\"${it.dep}\")" }
+            .toMutableList()
+
+        if (type == TEST) {
+            deps.add(0, "implementation(kotlin(\"test\"))")
+        }
         return if (deps.isEmpty()) {
-            "  |        val commonMain by getting"
+            "  |        val common$compilation by getting"
         } else {
-            """|        val commonMain by getting {
+            """|        val common$compilation by getting {
                |            dependencies {
                |                ${deps.joinToString("\n|                ")}
                |            }
@@ -100,39 +102,34 @@ kotlin {
         }
     }
 
-    private fun singleSourceSet(
-        target: Target,
-        compilation: String,
+    private fun sourceSet(
+        sourceSetName: String,
+        deps: List<String>,
+        type: SourceSetType,
         sourceSetDelegate: SourceSetDelegate
     ): String {
-        val deps = projectInfo.singleTargetDependencies
-            .filter { it.target == target && it.sourceSetType.sourceSetTypeName == compilation }
-            .map { "implementation(\"${it.dep}\")" }
+        val compilation = type.sourceSetTypeName
         return if (deps.isEmpty()) {
-            "val ${target.targetName}$compilation by ${sourceSetDelegate.delegate}"
+            "val $sourceSetName$compilation by ${sourceSetDelegate.delegate}"
         } else {
-            """val ${target.targetName}$compilation by ${sourceSetDelegate.delegate} {
+            """val $sourceSetName$compilation by ${sourceSetDelegate.delegate} {
                |            dependencies {
-               |                ${deps.joinToString("\n|                ")}
+               |                ${deps.joinToString("\n|                ") { "implementation(\"${it}\")" }}
                |            }
                |        }"""
         }
     }
 
-    private fun commonTestSourceSet() =
-        """|        val commonTest by getting {
-           |            dependencies {
-           |                implementation(kotlin("test"))
-           |            }
-           |        }"""
+    private fun Target.getDeps(compilation: SourceSetType) = projectInfo.dependencies
+        .filter { it.targets.size == 1 && it.targets.single() == this && it.sourceSetType == compilation }
+        .map { it.dep }
 
-    private fun targetSourceSets(compilation: String): String {
+    private fun targetSourceSets(type: SourceSetType): String {
+        val compilation = type.sourceSetTypeName
         val intention = "\n|        "
         return projectInfo.targets.joinToString(intention) {
             when (it) {
-                Target.ANDROID -> singleSourceSet(Target.ANDROID, compilation, GETTING)
-                Target.JVM -> singleSourceSet(Target.JVM, compilation, GETTING)
-                Target.JS -> singleSourceSet(Target.JS, compilation, GETTING)
+                Target.ANDROID, Target.JVM, Target.JS -> NAN
                 Target.LINUX -> "val linuxX64$compilation by getting"
                 Target.MACOS -> "val macosX64$compilation by getting ${intention}val macosArm64$compilation by getting"
                 Target.IOS -> "val iosX64$compilation by getting ${intention}val iosArm64$compilation by getting${intention}val iosSimulatorArm64$compilation by getting"
@@ -143,19 +140,35 @@ kotlin {
         }
     }
 
-    private fun platformSourceSets(compilation: String): String =
-        projectInfo.targets.joinToString("\n|        ") {
-            when (it) {
-                Target.ANDROID, Target.JVM, Target.JS -> NAN
-                Target.LINUX, Target.MACOS, Target.TV_OS, Target.WATCH_OS, Target.WINDOWS, Target.IOS ->
-                    singleSourceSet(it, compilation, CREATING)
-            }
+    private fun platformSourceSets(type: SourceSetType): String {
+
+        val additionalDeps = mutableListOf<String>()
+
+        //corner case: project has only native one target and dependency which supports several native targets
+        //so, we have to declare it in target source set
+        if (projectInfo.isSingleNativeTargetPresent()) {
+            additionalDeps += projectInfo.dependencies.filter {
+                it.targets.size > 1
+                    && it.targets.all { t -> t.isNative() }
+                    && it.sourceSetType == type
+            }.map { it.dep }
         }
 
-    private fun sourceSetsHierarchy(compilation: String): String {
+        return projectInfo.targets.joinToString("\n|        ") {
+            when (it) {
+                Target.ANDROID, Target.JVM, Target.JS ->
+                    sourceSet(it.targetName, it.getDeps(type), type, GETTING)
+                Target.LINUX, Target.MACOS, Target.TV_OS, Target.WATCH_OS, Target.WINDOWS, Target.IOS ->
+                    sourceSet(it.targetName, it.getDeps(type) + additionalDeps, type, CREATING)
+            }
+        }
+    }
+
+    private fun sourceSetsHierarchy(type: SourceSetType): String {
+        val compilation = type.sourceSetTypeName
         val intention = "\n|        "
 
-        val commonNative = projectInfo.targets.isCommonNativeTargetPresent()
+        val commonNative = projectInfo.isCommonNativeTargetPresent()
         val nativeParent = if (commonNative) "native$compilation" else "common$compilation"
         val nativeSourceSet = if (commonNative) "native$compilation.dependsOn(common$compilation)$intention" else ""
 
@@ -174,10 +187,15 @@ kotlin {
         }
     }
 
-    private fun commonNativeSourceSet(compilation: String): String {
-        if (!projectInfo.targets.isCommonNativeTargetPresent()) return NAN
-        val deps = projectInfo.commonNativeTargetLibraries
-            .filter { it.sourceSetType.sourceSetTypeName == compilation }
+    private fun commonNativeSourceSet(type: SourceSetType): String {
+        val compilation = type.sourceSetTypeName
+        if (!projectInfo.isCommonNativeTargetPresent()) return NAN
+        val deps = projectInfo.dependencies
+            .filter { d ->
+                d.targets.size > 1
+                    && d.targets.isNativeTargets()
+                    && d.sourceSetType == type
+            }
             .map { "implementation(\"${it.dep}\")" }
         return if (deps.isEmpty()) {
             "val native$compilation by ${CREATING.delegate}"

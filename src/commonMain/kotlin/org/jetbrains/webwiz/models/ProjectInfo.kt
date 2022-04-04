@@ -7,8 +7,6 @@ data class ProjectInfo(
     val kotlinVersion: KotlinVersion,
     val targets: Set<Target>,
     val dependencies: Set<KmpLibrary>,
-    val singleTargetDependencies: Set<SingleTargetLibrary>,
-    val commonNativeTargetLibraries: Set<CommonNativeTargetLibrary>,
     val gradlePlugins: Set<GradlePlugin>,
     val enableTests: Boolean
 ) {
@@ -19,10 +17,7 @@ data class ProjectInfo(
         require(gradlePlugins.all { it.canBeApplied(targets) }) {
             "incorrect gradle plugin was used for current set of targets"
         }
-        require(dependencies.all { dep -> dep.targets == null || targets.all { dep.targets.contains(it) } }) {
-            "incorrect dependency was used for current set of targets"
-        }
-        require(singleTargetDependencies.all { dep -> dep.target in targets}) {
+        require(dependencies.all { it.canBeApplied(targets) }) {
             "incorrect dependency was used for current set of targets"
         }
     }
@@ -31,8 +26,6 @@ data class ProjectInfo(
         targets = targets.sortedBy { it.ordinal }.toSet(),
         moduleName = moduleName.replace(' ', '_'),
         gradlePlugins = gradlePlugins.filter { it.canBeApplied(targets) }.toSet(),
-        dependencies = dependencies.filter { dep -> dep.targets == null || targets.all { dep.targets.contains(it) } }.toSet(),
-        singleTargetDependencies = singleTargetDependencies.filter { dep -> dep.target in targets }.toSet(),
-        commonNativeTargetLibraries = if (targets.isCommonNativeTargetPresent()) commonNativeTargetLibraries else emptySet()
+        dependencies = dependencies.filter { dep -> dep.canBeApplied(targets) }.toSet()
     )
 }

@@ -13,7 +13,6 @@ import org.jetbrains.webwiz.generator.generate
 import org.jetbrains.webwiz.models.KmpLibrary
 import org.jetbrains.webwiz.models.KotlinVersion
 import org.jetbrains.webwiz.models.ProjectInfo
-import org.jetbrains.webwiz.models.SingleTargetLibrary
 import org.jetbrains.webwiz.models.Target
 import org.jetbrains.webwiz.setHighlightedCode
 import org.jetbrains.webwiz.style.WtContainer
@@ -29,9 +28,13 @@ private val defaultProject = ProjectInfo(
     kotlinVersion = KotlinVersion.Stable,
     targets = setOf(Target.ANDROID, Target.IOS),
     enableTests = true,
-    dependencies = setOf(KmpLibrary.COROUTINES, KmpLibrary.KERMIT_LOGGER, KmpLibrary.KTOR_CORE),
-    singleTargetDependencies = setOf(SingleTargetLibrary.KTOR_CLIENT_IOS, SingleTargetLibrary.KTOR_CLIENT_ANDROID),
-    commonNativeTargetLibraries = emptySet(),
+    dependencies = setOf(
+        KmpLibrary.COROUTINES,
+        KmpLibrary.KERMIT_LOGGER,
+        KmpLibrary.KTOR_CORE,
+        KmpLibrary.KTOR_CLIENT_IOS,
+        KmpLibrary.KTOR_CLIENT_ANDROID
+    ),
     gradlePlugins = emptySet()
 ).normalize()
 
@@ -104,18 +107,6 @@ fun WizardSection(callback: (projectInfo: ProjectInfo) -> Unit) = Section({
                 Text("Libraries")
             }
             LibrariesChips(projectInfoState.value) { projectInfoState.value = it }
-        }
-        Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
-            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                Text("Single Target Libraries")
-            }
-            SingleTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
-        }
-        Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
-            Span({ classes(WtOffsets.textInputLabelsStyle) }) {
-                Text("Native Target Libraries")
-            }
-            NativeTargetLibraryChips(projectInfoState.value) { projectInfoState.value = it }
         }
         Div({ classes(WtOffsets.rowTargetsItems, WtTexts.wtText1) }) {
             Span({ classes(WtOffsets.textInputLabelsStyle) }) {

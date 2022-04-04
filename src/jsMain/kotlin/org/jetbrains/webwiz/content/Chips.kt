@@ -9,17 +9,15 @@ import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.KmpLibrary
-import org.jetbrains.webwiz.models.CommonNativeTargetLibrary
 import org.jetbrains.webwiz.models.ProjectInfo
-import org.jetbrains.webwiz.models.SingleTargetLibrary
 import org.jetbrains.webwiz.models.Target
-import org.jetbrains.webwiz.models.isCommonNativeTargetPresent
 import org.jetbrains.webwiz.style.WtOffsets
 
 @Composable
 fun TargetChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         Target.values().forEach { t ->
+            val id = "target_checkbox_${t.name}"
             Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
                 CheckboxInput(projectInfo.targets.contains(t)) {
                     onChange { event ->
@@ -30,121 +28,42 @@ fun TargetChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
                         }
                         update(projectInfo.applyNewTargets(new))
                     }
-                    id("checkbox_${t.name}")
+                    id(id)
                 }
-                Label(forId = "checkbox_${t.name}") {
-                    Text(t.userName)
-                }
+                Label(forId = id) { Text(t.userName) }
             }
         }
     }
 }
 
-private fun ProjectInfo.applyNewTargets(targets: Set<Target>): ProjectInfo {
-    val currentLibraries = dependencies.toMutableSet()
-    val currentPlugins = gradlePlugins.toMutableSet()
-
-    for (library in KmpLibrary.values()) {
-        if (library.targets != null && targets.any { it !in library.targets }) {
-            currentLibraries.remove(library)
-        }
-    }
-
-    for (plugin in GradlePlugin.values()) {
-        if (targets.containsAll(plugin.mandatory) && !targets.any { it in plugin.forbidden })
-            continue
-        if (plugin.mandatory.isNotEmpty() && targets.any { !plugin.mandatory.contains(it) }) {
-            currentPlugins.remove(plugin)
-        }
-    }
-
-    return copy(
-        targets = targets,
-        dependencies = currentLibraries,
-        gradlePlugins = currentPlugins
-    )
-}
+private fun ProjectInfo.applyNewTargets(targets: Set<Target>): ProjectInfo = copy(
+    targets = targets,
+    dependencies = dependencies.filter { it.canBeApplied(targets) }.toSet(),
+    gradlePlugins = gradlePlugins.filter { it.canBeApplied(targets) }.toSet()
+)
 
 
 @Composable
 fun LibrariesChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
-        KmpLibrary.values().forEach { t ->
-
-            if (t.targets != null && projectInfo.targets.any { it !in t.targets }) {
-                return@forEach DisabledChip(t.userName)
+        KmpLibrary.values().forEach { lib ->
+            val id = "lib_checkbox_${lib.name}"
+            if (!lib.canBeApplied(projectInfo.targets)) {
+                return@forEach DisabledChip(id, lib.userName)
             }
 
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfo.dependencies.contains(t)) {
+                CheckboxInput(projectInfo.dependencies.contains(lib)) {
                     onChange { event ->
                         val new: Set<KmpLibrary> = when {
-                            event.value -> projectInfo.dependencies.plus(t)
-                            else -> projectInfo.dependencies.minus(t)
+                            event.value -> projectInfo.dependencies.plus(lib)
+                            else -> projectInfo.dependencies.minus(lib)
                         }
                         update(projectInfo.copy(dependencies = new))
                     }
-                    id("checkbox_${t.name}")
+                    id(id)
                 }
-                Label(forId = "checkbox_${t.name}") {
-                    Text(t.userName)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun SingleTargetLibraryChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
-    Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
-        SingleTargetLibrary.values().forEach { t ->
-
-            if (t.target !in projectInfo.targets ) {
-                return@forEach DisabledChip(t.userName)
-            }
-
-            return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfo.singleTargetDependencies.contains(t)) {
-                    onChange { event ->
-                        val new: Set<SingleTargetLibrary> = when {
-                            event.value -> projectInfo.singleTargetDependencies.plus(t)
-                            else -> projectInfo.singleTargetDependencies.minus(t)
-                        }
-                        update(projectInfo.copy(singleTargetDependencies = new))
-                    }
-                    id("checkbox_${t.name}")
-                }
-                Label(forId = "checkbox_${t.name}") {
-                    Text(t.userName)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun NativeTargetLibraryChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
-    Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
-        CommonNativeTargetLibrary.values().forEach { t ->
-
-            if (!projectInfo.targets.isCommonNativeTargetPresent() ) {
-                return@forEach DisabledChip(t.userName)
-            }
-
-            return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
-                CheckboxInput(projectInfo.commonNativeTargetLibraries.contains(t)) {
-                    onChange { event ->
-                        val new: Set<CommonNativeTargetLibrary> = when {
-                            event.value -> projectInfo.commonNativeTargetLibraries.plus(t)
-                            else -> projectInfo.commonNativeTargetLibraries.minus(t)
-                        }
-                        update(projectInfo.copy(commonNativeTargetLibraries = new))
-                    }
-                    id("checkbox_${t.name}")
-                }
-                Label(forId = "checkbox_${t.name}") {
-                    Text(t.userName)
-                }
+                Label(forId = id) { Text(lib.userName) }
             }
         }
     }
@@ -154,9 +73,9 @@ fun NativeTargetLibraryChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> 
 fun PluginsChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
     Div({ classes(WtOffsets.targetsCheckboxesListStyle) }) {
         GradlePlugin.values().forEach { t ->
-            if (t.mandatory.any { !projectInfo.targets.contains(it) } ||
-                t.forbidden.any { projectInfo.targets.contains(it) }) {
-                return@forEach DisabledChip(t.userName)
+            val id = "checkbox_gradle_plugin_${t.name}"
+            if (!t.canBeApplied(projectInfo.targets)) {
+                return@forEach DisabledChip(id, t.userName)
             }
 
             return@forEach Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
@@ -168,25 +87,23 @@ fun PluginsChips(projectInfo: ProjectInfo, update: (ProjectInfo) -> Unit) {
                         }
                         update(projectInfo.copy(gradlePlugins = new))
                     }
-                    id("checkbox_gradle_plugin_${t.name}")
+                    id(id)
                 }
-                Label(forId = "checkbox_gradle_plugin_${t.name}") {
-                    Text(t.userName)
-                }
+                Label(forId = id) { Text(t.userName) }
             }
         }
     }
 }
 
 @Composable
-fun DisabledChip(label: String) {
+fun DisabledChip(id: String, label: String) {
     Span({ classes(WtOffsets.targetsCheckboxesStyle) }) {
         CheckboxInput() {
-            id("checkbox_disabled_$label")
+            id(id)
             disabled()
         }
 
-        Label(forId = "checkbox_disabled_$label") {
+        Label(forId = id) {
             Text(label)
         }
     }

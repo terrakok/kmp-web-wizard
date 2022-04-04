@@ -8,7 +8,7 @@ private const val SqlDelightVersion = "1.5.3"
 private const val RealmVersion = "0.9.0"
 
 enum class KmpLibrary(
-    val targets: Set<Target>?, //null means any target
+    val targets: Set<Target>,
     val userName: String,
     val dep: String,
     val sourceSetType: SourceSetType
@@ -43,10 +43,10 @@ enum class KmpLibrary(
         "io.github.aakira:napier:2.3.0",
         MAIN
     ),
-    SQLDELIGHT_COROUTINES(
-        setOf(ANDROID, JVM, JS, IOS, LINUX, MACOS, WINDOWS, TV_OS, WATCH_OS),
-        "SQLDelight Coroutines",
-        "com.squareup.sqldelight:coroutines-extensions:$SqlDelightVersion",
+    REALM_KOTLIN(
+        setOf(JVM, ANDROID, IOS, MACOS),
+        "Realm Kotlin Multiplatform",
+        "io.realm.kotlin:library-base:$RealmVersion",
         MAIN
     ),
     KTOR_CORE(
@@ -55,73 +55,79 @@ enum class KmpLibrary(
         "io.ktor:ktor-client-core:$KtorVersion",
         MAIN
     ),
-    REALM_KOTLIN(
-        setOf(JVM, ANDROID, IOS, MACOS),
-        "Realm Kotlin Multiplatform",
-        "io.realm.kotlin:library-base:$RealmVersion",
-        MAIN
-    ),
-}
-
-enum class SingleTargetLibrary(
-    val target: Target,
-    val userName: String,
-    val dep: String,
-    val sourceSetType: SourceSetType
-) {
     KTOR_CLIENT_IOS(
-        IOS,
+        setOf(IOS),
         "Ktor iOS Client",
         "io.ktor:ktor-client-ios:$KtorVersion",
         MAIN
     ),
     KTOR_CLIENT_ANDROID(
-        ANDROID,
+        setOf(ANDROID),
         "Ktor Android Client",
         "io.ktor:ktor-client-okhttp:$KtorVersion",
         MAIN
     ),
     KTOR_CLIENT_JVM(
-        JVM,
+        setOf(JVM),
         "Ktor JVM Client",
         "io.ktor:ktor-client-jvm:$KtorVersion",
         MAIN
     ),
     KTOR_CLIENT_JS(
-        JS,
+        setOf(JS),
         "Ktor JS Client",
         "io.ktor:ktor-client-js:$KtorVersion",
         MAIN
     ),
+    SQLDELIGHT_COROUTINES(
+        setOf(ANDROID, JVM, JS, IOS, LINUX, MACOS, WINDOWS, TV_OS, WATCH_OS),
+        "SQLDelight Coroutines",
+        "com.squareup.sqldelight:coroutines-extensions:$SqlDelightVersion",
+        MAIN
+    ),
     SQLDELIGHT_DRIVER_ANDROID(
-        ANDROID,
+        setOf(ANDROID),
         "SQLDelight Android Driver",
         "com.squareup.sqldelight:android-driver:$SqlDelightVersion",
         MAIN
     ),
     SQLDELIGHT_DRIVER_JVM(
-        JVM,
+        setOf(JVM),
         "SQLDelight JVM Driver",
         "com.squareup.sqldelight:sqlite-driver:$SqlDelightVersion",
         MAIN
     ),
     SQLDELIGHT_DRIVER_JS(
-        JS,
+        setOf(JS),
         "SQDelight JS Driver",
         "com.squareup.sqldelight:sqljs-driver:$SqlDelightVersion",
         MAIN
     ),
-}
-
-// Dependencies in here will be available for all native targets
-enum class CommonNativeTargetLibrary(
-    val userName: String,
-    val dep: String,
-    val sourceSetType: SourceSetType
-) {
     SQLDELIGHT_DRIVER_NATIVE(
+        setOf(MACOS, IOS, TV_OS, WATCH_OS, LINUX, WINDOWS),
         "SQLDelight Native Driver",
         "com.squareup.sqldelight:native-driver:$SqlDelightVersion",
         MAIN
-    ),
+    );
+
+    fun canBeApplied(targets: Set<Target>): Boolean {
+        val isCommon = targets.size == Target.values().size
+        if (isCommon) return true
+
+        val isSingleTargetLib = this.targets.size == 1
+        if (isSingleTargetLib) {
+            return targets.contains(this.targets.single())
+        }
+
+        val isNativeTargetLib = this.targets.isNativeTargets()
+        if (isNativeTargetLib) {
+            return targets.any { it.isNative() }
+        }
+
+        //corner case:
+        //Kotlin MPP supports ios+android library in ios+android+js projects
+        //but it requires unusual source sets hierarchy which is not supported by this wizard
+
+        return targets.all { it in this.targets }
+    }
 }

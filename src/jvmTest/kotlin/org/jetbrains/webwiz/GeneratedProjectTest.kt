@@ -40,9 +40,7 @@ class GeneratedProjectTest {
                 "my.sdk.awesome",
                 KotlinVersion.Stable,
                 setOf(Target.JVM, Target.LINUX),
-                setOf(KmpLibrary.KERMIT_LOGGER, KmpLibrary.COROUTINES, KmpLibrary.DATE_TIME),
-                emptySet(),
-                emptySet(),
+                setOf(KmpLibrary.KERMIT_LOGGER, KmpLibrary.COROUTINES, KmpLibrary.DATE_TIME, KmpLibrary.SQLDELIGHT_DRIVER_NATIVE),
                 setOf(GradlePlugin.PUBLISH),
                 true
             )

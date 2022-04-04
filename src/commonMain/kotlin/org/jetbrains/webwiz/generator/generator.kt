@@ -4,7 +4,7 @@ import org.jetbrains.webwiz.generator.files.*
 import org.jetbrains.webwiz.models.GradlePlugin
 import org.jetbrains.webwiz.models.ProjectInfo
 import org.jetbrains.webwiz.models.Target.ANDROID
-import org.jetbrains.webwiz.models.isNativeTargetPresent
+import org.jetbrains.webwiz.models.isCommonNativeTargetPresent
 
 interface ProjectFile {
     val path: String
@@ -30,7 +30,7 @@ fun ProjectInfo.generate(): List<ProjectFile> = mutableListOf<ProjectFile>().app
     info.targets.forEach { target ->
         add(TargetPlatformKt(target, info))
     }
-    if (info.targets.isNativeTargetPresent()) {
+    if (info.isCommonNativeTargetPresent()) {
         add(IntermediatePlatformKt("native", info))
     }
 
@@ -47,7 +47,7 @@ fun ProjectInfo.generate(): List<ProjectFile> = mutableListOf<ProjectFile>().app
         info.targets.forEach { target ->
             add(TargetPlatformTestKt(target, info))
         }
-        if (info.targets.isNativeTargetPresent()) {
+        if (info.isCommonNativeTargetPresent()) {
             add(IntermediatePlatformTestKt("native", info))
         }
     }
