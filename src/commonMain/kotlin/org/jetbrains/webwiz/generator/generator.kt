@@ -2,6 +2,7 @@ package org.jetbrains.webwiz.generator
 
 import org.jetbrains.webwiz.generator.files.*
 import org.jetbrains.webwiz.models.GradlePlugin
+import org.jetbrains.webwiz.models.KotlinVersion
 import org.jetbrains.webwiz.models.ProjectInfo
 import org.jetbrains.webwiz.models.Target.ANDROID
 import org.jetbrains.webwiz.models.isCommonNativeTargetPresent
@@ -21,7 +22,7 @@ fun ProjectInfo.generate(): List<ProjectFile> = mutableListOf<ProjectFile>().app
     add(GradleWrapperJar())
 
     add(RootBuildGradle(info))
-    add(SettingsGradle(projectName, moduleName))
+    add(SettingsGradle(projectName, moduleName, kotlinVersion == KotlinVersion.EAP))
     add(GradleProperties())
 
     add(ModuleBuildGradle(info))
