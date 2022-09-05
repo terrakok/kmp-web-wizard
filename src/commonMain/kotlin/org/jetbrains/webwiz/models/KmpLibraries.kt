@@ -3,9 +3,9 @@ package org.jetbrains.webwiz.models
 import org.jetbrains.webwiz.models.SourceSetType.MAIN
 import org.jetbrains.webwiz.models.Target.*
 
-private const val KtorVersion = "2.0.0-beta-1"
+private const val KtorVersion = "2.1.0"
 private const val SqlDelightVersion = "1.5.3"
-private const val RealmVersion = "0.9.0"
+private const val RealmVersion = "1.1.0"
 
 enum class KmpLibrary(
     val targets: Set<Target>,
@@ -16,31 +16,31 @@ enum class KmpLibrary(
     COROUTINES(
         setOf(ANDROID, JVM, JS, MACOS, IOS, TV_OS, WATCH_OS, LINUX, WINDOWS),
         "KotlinX Coroutines",
-        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0",
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4",
         MAIN
     ),
     SERIALIZATION(
         setOf(ANDROID, JVM, JS, MACOS, IOS, TV_OS, WATCH_OS, LINUX, WINDOWS),
         "KotlinX Serialization",
-        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2",
+        "org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0",
         MAIN
     ),
     DATE_TIME(
         setOf(ANDROID, JVM, JS, MACOS, IOS, TV_OS, WATCH_OS, LINUX, WINDOWS),
         "KotlinX DateTime",
-        "org.jetbrains.kotlinx:kotlinx-datetime:0.3.1",
+        "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0",
         MAIN
     ),
     KERMIT_LOGGER(
         setOf(ANDROID, JVM, JS, MACOS, IOS, TV_OS, WATCH_OS, LINUX, WINDOWS),
         "Kermit Logger",
-        "co.touchlab:kermit:1.0.0",
+        "co.touchlab:kermit:1.1.3",
         MAIN
     ),
     NAPIER_LOGGER(
         setOf(ANDROID, JVM, JS, MACOS, IOS, TV_OS, WATCH_OS),
         "Napier logger",
-        "io.github.aakira:napier:2.3.0",
+        "io.github.aakira:napier:2.6.1",
         MAIN
     ),
     REALM_KOTLIN(

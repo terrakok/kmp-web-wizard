@@ -91,7 +91,7 @@ internal class ProjectBuilderTest {
                     /* Main source sets */
                     val commonMain by getting {
                         dependencies {
-                            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0")
                         }
                     }
                     val jvmMain by getting
@@ -191,8 +191,8 @@ internal class ProjectBuilderTest {
                     /* Main source sets */
                     val commonMain by getting {
                         dependencies {
-                            implementation("co.touchlab:kermit:1.0.0")
-                            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+                            implementation("co.touchlab:kermit:1.1.3")
+                            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
                         }
                     }
                     val nativeMain by creating {
@@ -204,7 +204,7 @@ internal class ProjectBuilderTest {
                     val androidMain by getting
                     val iosMain by creating {
                         dependencies {
-                            implementation("io.ktor:ktor-client-ios:2.0.0-beta-1")
+                            implementation("io.ktor:ktor-client-ios:2.1.0")
                         }
                     }
                     val linuxMain by creating
