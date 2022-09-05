@@ -47,6 +47,22 @@ class GeneratedProjectTest {
         )
     }
 
+    @Test
+    fun testGeneratedProjectJvmLinuxEap() {
+        checkProject(
+            ProjectInfo(
+                "myapp",
+                "app",
+                "org.sample.app",
+                KotlinVersion.EAP,
+                setOf(Target.JVM, Target.LINUX),
+                setOf(KmpLibrary.NAPIER_LOGGER, KmpLibrary.COROUTINES, KmpLibrary.DATE_TIME),
+                setOf(GradlePlugin.PUBLISH),
+                true
+            )
+        )
+    }
+
     private fun checkProject(projectInfo: ProjectInfo) {
         val dir = projectInfo.asDir(workingDir)
 
