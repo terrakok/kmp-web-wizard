@@ -1,6 +1,8 @@
-# Compose Multiplatform Wizard
+# KMP Library Wizard
 
-[![](https://raw.githubusercontent.com/terrakok/Compose-Multiplatform-Wizard/master/img/page-screenshot.png)](https://terrakok.github.io/Compose-Multiplatform-Wizard/)  
+This is a copy of the [Compose Multiplatform Wizard](https://github.com/terrakok/Compose-Multiplatform-Wizard) project for own GH page
+
+[![](https://raw.githubusercontent.com/terrakok/kmp-web-wizard/master/img/page-screenshot.png)](https://terrakok.github.io/kmp-web-wizard/)  
 
 ## ☕ Support the Developer
 
