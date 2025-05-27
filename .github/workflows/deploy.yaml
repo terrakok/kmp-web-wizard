@@ -43,7 +43,7 @@ jobs:
 
       - name: Build
         run: |
-          ./gradlew jsBrowserDistribution
+          ./gradlew jsBrowserDistribution -PwizardType=kmp
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
