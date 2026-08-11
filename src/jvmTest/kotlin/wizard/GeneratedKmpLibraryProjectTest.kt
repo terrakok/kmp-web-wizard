@@ -156,7 +156,7 @@ class GeneratedKmpLibraryProjectTest {
                     "plugins {",
                     """
                         plugins {
-                            id("io.github.ben-manes.versions").version("0.60.0")
+                            id("io.github.ben-manes.versions").version("0.61.0")
                     """.trimIndent()
                 )
             )
